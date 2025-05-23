@@ -23,14 +23,18 @@ jobs:
       - name: Build PDFs using Marp CLI
         run: |
           mkdir -p dist
+          echo '#!/bin/sh' > marp-run.sh
+          echo 'for file in presentation/*.md; do' >> marp-run.sh
+          echo '  name=$(basename "$file" .md)' >> marp-run.sh
+          echo '  marp "$file" --pdf --allow-local-files --output "dist/$name.pdf"' >> marp-run.sh
+          echo 'done' >> marp-run.sh
+          chmod +x marp-run.sh
+
           docker run --rm \
             -v "${PWD}:/home/marp/app" \
             -w /home/marp/app \
             marpteam/marp-cli:latest \
-            sh -c 'for file in presentation/*.md; do \
-              name=$(basename "$file" .md); \
-              marp "$file" --pdf --allow-local-files --output "dist/$name.pdf"; \
-            done'
+            ./marp-run.sh
 
       - name: Upload PDFs
         uses: actions/upload-artifact@v4
