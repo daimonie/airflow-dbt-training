@@ -1,1 +1,0 @@
-# airflow-dbt-training
