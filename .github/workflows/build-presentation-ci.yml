@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Check out repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4'
 
       - name: Build PDFs and PPTX using Marp CLI
         run: |
@@ -27,11 +27,11 @@ jobs:
           chmod +x marp-run.sh
 
           docker run --rm \
-            -u $(id -u):$(id -g) \
             -v "${PWD}:/home/marp/app" \
             -w /home/marp/app \
             marpteam/marp-cli:latest \
             ./marp-run.sh
+
 
       - name: Upload slide artifacts
         uses: actions/upload-artifact@v4
