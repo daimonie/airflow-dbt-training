@@ -3,8 +3,8 @@ name: Build Marp Presentations
 on:
   push:
     paths:
-      - 'presentation/**.md'
-      - 'build-presentation-ci'
+      - 'presentation/**/*.md'
+      - '.github/workflows/build-presentation-ci.yml'
   workflow_dispatch:
 
 jobs:
@@ -14,6 +14,11 @@ jobs:
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
+
+      - name: List presentation files
+        run: |
+          ls -la presentation/
+          find presentation -name "*.md"
 
       - name: Build PDFs using Marp CLI
         run: |
