@@ -1,0 +1,34 @@
+name: Build Marp Presentations
+
+on:
+  push:
+    paths:
+      - 'presentation/**.md'
+  workflow_dispatch:
+
+jobs:
+  build-pdfs:
+    runs-on: ubuntu-latest
+    container:
+      image: marpteam/marp-cli:latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Create output directory
+        run: mkdir -p dist
+
+      - name: Convert Markdown to PDF
+        run: |
+          for file in presentation/*.md; do
+            name=$(basename "$file" .md)
+            marp "$file" --pdf --allow-local-files --output "dist/$name.pdf"
+          done
+
+      - name: Upload PDFs
+        uses: actions/upload-artifact@v4
+        with:
+          name: presentation-pdfs
+          path: dist/
+
