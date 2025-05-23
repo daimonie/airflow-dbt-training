@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'presentation/**.md'
+      - 'build-presentation-ci'
   workflow_dispatch:
 
 jobs:
@@ -14,20 +15,17 @@ jobs:
       - name: Check out repo
         uses: actions/checkout@v4
 
-      - name: Create output directory
-        run: mkdir -p dist
-
-      - name: Build PDFs using marp-cli in Docker
-        uses: addnab/docker-run-action@v3
-        with:
-          image: marpteam/marp-cli:latest
-          options: -v ${{ github.workspace }}:/home/marp/app
-          run: |
-            mkdir -p dist
-            for file in presentation/*.md; do
-              name=$(basename "$file" .md)
-              marp "$file" --pdf --allow-local-files --output "dist/$name.pdf"
-            done
+      - name: Build PDFs using Marp CLI
+        run: |
+          mkdir -p dist
+          docker run --rm \
+            -v "${PWD}:/home/marp/app" \
+            -w /home/marp/app \
+            marpteam/marp-cli:latest \
+            sh -c 'for file in presentation/*.md; do \
+              name=$(basename "$file" .md); \
+              marp "$file" --pdf --allow-local-files --output "dist/$name.pdf"; \
+            done'
 
       - name: Upload PDFs
         uses: actions/upload-artifact@v4
