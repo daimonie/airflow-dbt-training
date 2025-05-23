@@ -1,11 +1,7 @@
 from airflow import DAG
-from airflow.utils.task_group import TaskGroup
-from airflow.decorators import task_group, task, dag
-from airflow.operators.bash import BashOperator
-from airflow.operators.python import PythonOperator, BranchPythonOperator
-from airflow.utils.dates import days_ago
+from airflow.decorators import task, dag
 from airflow.operators.trigger_dagrun import TriggerDagRunOperator
-from datetime import timedelta, datetime
+from datetime import datetime
 
 with DAG(
     dag_id="false_dag",

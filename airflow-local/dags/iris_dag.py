@@ -8,7 +8,7 @@ from sklearn.datasets import load_iris
 CSV_PATH = "iris.csv"
 
 with DAG(
-    dag_id="iris_analysis_pipeline_cached",
+    dag_id="iris_dag",
     start_date=days_ago(1),
     schedule_interval=None,
     catchup=False,
