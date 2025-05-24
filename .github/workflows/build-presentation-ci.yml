@@ -18,20 +18,25 @@ jobs:
       - name: Build Marp slides (PDF + PPTX)
         run: |
           mkdir -p presentation/dist
+
+          cat <<'EOF' > marp-run.sh
+          for file in presentation/*.md; do
+            name=$(basename "$file" .md)
+            marp "$file" --pdf --allow-local-files --output "presentation/dist/$name.pdf"
+            marp "$file" --pptx --allow-local-files --output "presentation/dist/$name.pptx"
+          done
+          EOF
+
+          chmod +x marp-run.sh
+
           docker run --rm \
             -v "$PWD:$PWD" \
             -w "$PWD" \
             marpteam/marp-cli:latest \
-            sh -c 'for file in presentation/*.md; do \
-              name=$(basename "$file" .md); \
-              marp "$file" --pdf --allow-local-files --output "presentation/dist/$name.pdf"; \
-              marp "$file" --pptx --allow-local-files --output "presentation/dist/$name.pptx"; \
-            done'
-
-
+            ./marp-run.sh
 
       - name: Upload slide artifacts
         uses: actions/upload-artifact@v4
         with:
           name: presentation-slides
-          path: dist/
+          path: presentation/dist/
