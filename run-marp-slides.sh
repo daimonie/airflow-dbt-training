@@ -9,18 +9,14 @@ for file in presentation/*.md; do
   docker run --rm --init \
     -v "$PWD:/home/marp/app/" \
     -e LANG=$LANG \
-    -e MARP_USER="$(id -u):$(id -g)" \
     marpteam/marp-cli \
-    "$file" --pdf \
-    --theme-set presentation/my-gaia.css \
-    --allow-local-files --output "tmp/presentation/dist/$name.pdf"
+    --theme-set presentation/my-gaia.css \ 
+    "$file" --pdf --allow-local-files --output "tmp/presentation/dist/$name.pdf"
 
   docker run --rm --init \
     -v "$PWD:/home/marp/app/" \
     -e LANG=$LANG \
-    -e MARP_USER="$(id -u):$(id -g)" \
     marpteam/marp-cli \
-    "$file" --pptx \
-    --theme-set presentation/my-gaia.css \
-    --allow-local-files --output "tmp/presentation/dist/$name.pptx"
+    --theme-set presentation/my-gaia.css \ 
+    "$file" --pptx --allow-local-files --output "tmp/presentation/dist/$name.pptx"
 done
