@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - 'presentation/**/*.md'
-      - 'marp-run.sh'
+      - 'run-marp-slides.sh'
       - '.github/workflows/build-presentation-ci.yml'
   workflow_dispatch:
 
@@ -25,7 +25,7 @@ jobs:
             -v "$PWD:/work" \
             -w /work \
             marpteam/marp-cli:latest \
-            ./marp-run.sh
+            ./run-marp-slides.sh
 
       - name: Upload slide artifacts
         uses: actions/upload-artifact@v4
