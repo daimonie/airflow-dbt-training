@@ -5,12 +5,13 @@ paginate: true
 ---
 
 <style>
-  :root {
-    --color-background: #ffffff;
-    --color-foreground: #2a2a2a;
-    --color-highlight: ForestGreen;
-    --color-dimmed: #888888;
-  }
+:root {
+  --color-background: #f8fcf8;    /* very pale green-tinted white */
+  --color-foreground: #1e2e1e;    /* near-black with a green-gray tint */
+  --color-highlight: #228b22;     /* ForestGreen (CSS named) */
+  --color-dimmed: #5a7d5a;        /* desaturated ForestGreen (muted footer) */
+}
+
 </style>
 
 <!-- _class: lead -->
