@@ -73,4 +73,6 @@ Each part of the training corresponds to a section in the slide deck and include
 
 ## License
 
-MIT
+All rights reserved. This repository and its contents are proprietary.  
+You may not reproduce, distribute, or adapt this material without written permission from the author.  
+Any proceeds or benefits resulting from a license violation must be remitted in full to the author.

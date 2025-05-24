@@ -4,8 +4,8 @@ on:
   push:
     paths:
       - 'presentation/**/*.md'
-      - '.github/workflows/build-presentation-ci.yml'
       - 'marp-run.sh'
+      - '.github/workflows/build-presentation-ci.yml'
   workflow_dispatch:
 
 jobs:
@@ -16,14 +16,14 @@ jobs:
       - name: Check out repo
         uses: actions/checkout@v4
 
-      - name: Ensure output folder exists
-        run: mkdir -p presentation/dist
+      - name: Prepare output folders
+        run: mkdir -p tmp/presentation/dist
 
-      - name: Run Marp conversion inside Docker
+      - name: Run Marp CLI inside Docker
         run: |
           docker run --rm \
-            -v "$PWD:$PWD" \
-            -w "$PWD" \
+            -v "$PWD:/work" \
+            -w /work \
             marpteam/marp-cli:latest \
             ./marp-run.sh
 
@@ -31,4 +31,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: presentation-slides
-          path: presentation/dist/
+          path: tmp/presentation/dist/
