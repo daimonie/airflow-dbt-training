@@ -12,7 +12,6 @@ for file in presentation/*.md; do
     marpteam/marp-cli \
     "$file" \
     --pdf --allow-local-files \
-    --theme-set presentation/my-gaia.css \
     --output "tmp/presentation/dist/$name.pdf"
 
   docker run --rm --init \
@@ -21,6 +20,5 @@ for file in presentation/*.md; do
     marpteam/marp-cli \
     "$file" \
     --pptx --allow-local-files \
-    --theme-set presentation/my-gaia.css \
     --output "tmp/presentation/dist/$name.pptx"
 done

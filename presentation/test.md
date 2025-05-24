@@ -1,9 +1,19 @@
-
 ---
 marp: true
-theme: my-gaia
+theme: gaia
 paginate: true
 ---
+
+<style>
+  :root {
+    --color-background: #ffffff;
+    --color-foreground: #2a2a2a;
+    --color-highlight: ForestGreen;
+    --color-dimmed: #888888;
+  }
+</style>
+
+<!-- _class: lead -->
 
 # Airflow + dbt Training Day (7h)  
 ## PDF Guide
