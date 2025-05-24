@@ -1,0 +1,42 @@
+/* @theme my-gaia */
+@import 'gaia';
+
+/* Slide background and body text */
+section {
+  background-color: #ffffff;
+  color: #2a2a2a;
+}
+
+/* Headings use ForestGreen */
+h1, h2, h3 {
+  color: ForestGreen;
+}
+
+/* Emphasis and highlight */
+mark, .highlight {
+  background: #eaffea;
+  color: ForestGreen;
+}
+
+/* Links */
+a {
+  color: ForestGreen;
+  text-decoration: underline;
+}
+
+/* Code blocks */
+pre, code {
+  background-color: #f3f3f3;
+  color: #333333;
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-family: Consolas, Monaco, monospace;
+}
+
+/* Footer and page numbers */
+footer {
+  color: #888888;
+  font-size: 0.8em;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 0.5em;
+}
