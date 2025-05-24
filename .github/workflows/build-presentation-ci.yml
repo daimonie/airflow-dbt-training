@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'presentation/**/*.md'
+      - 'presentation/**/*.css'
       - 'run-marp-slides.sh'
       - '.github/workflows/build-presentation-ci.yml'
   workflow_dispatch:
