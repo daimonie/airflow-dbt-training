@@ -10,13 +10,17 @@ for file in presentation/*.md; do
     -v "$PWD:/home/marp/app/" \
     -e LANG=$LANG \
     marpteam/marp-cli \
+    "$file" \
+    --pdf --allow-local-files \
     --theme-set presentation/my-gaia.css \
-    "$file" --pdf --allow-local-files --output "tmp/presentation/dist/$name.pdf"
+    --output "tmp/presentation/dist/$name.pdf"
 
   docker run --rm --init \
     -v "$PWD:/home/marp/app/" \
     -e LANG=$LANG \
     marpteam/marp-cli \
+    "$file" \
+    --pptx --allow-local-files \
     --theme-set presentation/my-gaia.css \
-    "$file" --pptx --allow-local-files --output "tmp/presentation/dist/$name.pptx"
+    --output "tmp/presentation/dist/$name.pptx"
 done
