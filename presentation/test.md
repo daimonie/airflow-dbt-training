@@ -6,13 +6,29 @@ paginate: true
 
 <style>
 :root {
-  --color-background: #f8fcf8;    /* very pale green-tinted white */
-  --color-foreground: #1e2e1e;    /* near-black with a green-gray tint */
-  --color-highlight: #228b22;     /* ForestGreen (CSS named) */
-  --color-dimmed: #5a7d5a;        /* desaturated ForestGreen (muted footer) */
+  --color-background: #f4fdf4;     /* pale green-tinted white */
+  --color-foreground: #1f331f;     /* deep green-black for main text */
+  --color-highlight: #228b22;      /* ForestGreen for links and accents */
+  --color-dimmed: #6b8f6b;         /* muted desaturated ForestGreen */
+  --color-table-header: #1a5e1a;   /* strong dark green for tables */
+  --color-table-header-text: #ffffff; /* white text on dark green */
 }
 
+/* Optional: style table headers if using standard Markdown tables */
+table th {
+  background-color: var(--color-table-header);
+  color: var(--color-table-header-text);
+  font-weight: bold;
+  padding: 0.4em 0.6em;
+  border-bottom: 2px solid #cccccc;
+}
+
+table td {
+  padding: 0.4em 0.6em;
+  border-bottom: 1px solid #eeeeee;
+}
 </style>
+
 
 <!-- _class: lead -->
 
