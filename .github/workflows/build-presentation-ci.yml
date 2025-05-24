@@ -15,22 +15,19 @@ jobs:
       - name: Check out repo
         uses: actions/checkout@v4
 
-      - name: Build PDFs and PPTX using Marp CLI
+      - name: Build Marp slides (PDF + PPTX)
         run: |
-          mkdir -p dist
-          echo '#!/bin/sh' > marp-run.sh
-          echo 'for file in presentation/*.md; do' >> marp-run.sh
-          echo '  name=$(basename "$file" .md)' >> marp-run.sh
-          echo '  marp "$file" --pdf --allow-local-files --output "dist/$name.pdf"' >> marp-run.sh
-          echo '  marp "$file" --pptx --allow-local-files --output "dist/$name.pptx"' >> marp-run.sh
-          echo 'done' >> marp-run.sh
-          chmod +x marp-run.sh
-
+          mkdir -p presentation/dist
           docker run --rm \
-            -v "${PWD}:/home/marp/app" \
-            -w /home/marp/app \
+            -v "$PWD:$PWD" \
+            -w "$PWD" \
             marpteam/marp-cli:latest \
-            ./marp-run.sh
+            sh -c 'for file in presentation/*.md; do \
+              name=$(basename "$file" .md); \
+              marp "$file" --pdf --allow-local-files --output "presentation/dist/$name.pdf"; \
+              marp "$file" --pptx --allow-local-files --output "presentation/dist/$name.pptx"; \
+            done'
+
 
 
       - name: Upload slide artifacts
