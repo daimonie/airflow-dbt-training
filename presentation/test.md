@@ -1,7 +1,7 @@
 
 ---
 marp: true
-theme: gaia
+theme: my-gaia
 paginate: true
 ---
 
