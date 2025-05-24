@@ -13,17 +13,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out repo
+      - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Prepare output folders
+      - name: Prepare output directory
         run: mkdir -p tmp/presentation/dist
 
       - name: Run Marp CLI inside Docker
         run: |
           docker run --rm \
-            -v "$PWD:/work" \
-            -w /work \
+            -v "$PWD:/home/marp/app" \
+            -w /home/marp/app \
             marpteam/marp-cli:latest \
             ./run-marp-slides.sh
 

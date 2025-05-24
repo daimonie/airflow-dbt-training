@@ -39,6 +39,13 @@ The `airflow-local/` folder contains a `docker-compose.yml` configuration for sp
 - Docker
 - Docker Compose
 
+### Components
+
+The environment includes:
+- Airflow webserver and scheduler (Apache Airflow 2.8.1)
+- PostgreSQL database for Airflow metadata
+- Separate PostgreSQL database for data warehousing (DWH)
+
 ### Usage
 
 ```bash
@@ -46,30 +53,17 @@ cd airflow-local
 docker-compose up
 ```
 
-This will start:
-
-- Airflow webserver and scheduler
-- PostgreSQL database (used by both Airflow and dbt)
-
 The Airflow web UI will be available at:
 
 http://localhost:8080
 
-Default login (unless overridden in `docker-compose.yml`):
+Default login credentials:
+- Username: `admin`
+- Password: `admin`
 
-- Username: `airflow`
-- Password: `airflow`
+### Available DAGs
 
-You can add your DAGs to the `airflow-local/dags/` directory and see them appear in the UI.
-
-## Exercises
-
-Each part of the training corresponds to a section in the slide deck and includes:
-
-- Writing basic DAGs using dummy and Python operators
-- Ingesting data using custom functions
-- Modeling and testing using dbt from inside the Airflow container
-- Generating a simple output chart from transformed data
+The `airflow-local/dags/` directory includes several example DAGs demonstrating different Airflow features:
 
 ## License
 
