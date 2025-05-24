@@ -7,13 +7,19 @@ section {
   color: #2a2a2a;
 }
 
-/* Headings use ForestGreen */
-h1, h2, h3 {
-  color: ForestGreen;
+/* Headings use ForestGreen — override Gaia with specificity */
+section h1,
+section h2,
+section h3,
+section h4,
+section h5,
+section h6 {
+  color: ForestGreen !important;
 }
 
 /* Emphasis and highlight */
-mark, .highlight {
+mark,
+.highlight {
   background: #eaffea;
   color: ForestGreen;
 }
@@ -25,7 +31,8 @@ a {
 }
 
 /* Code blocks */
-pre, code {
+pre,
+code {
   background-color: #f3f3f3;
   color: #333333;
   padding: 0.2em 0.4em;
