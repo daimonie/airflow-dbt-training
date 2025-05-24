@@ -5,6 +5,7 @@ on:
     paths:
       - 'presentation/**/*.md'
       - '.github/workflows/build-presentation-ci.yml'
+      - 'marp-run.sh'
   workflow_dispatch:
 
 jobs:
@@ -15,20 +16,11 @@ jobs:
       - name: Check out repo
         uses: actions/checkout@v4
 
-      - name: Build Marp slides (PDF + PPTX)
+      - name: Ensure output folder exists
+        run: mkdir -p presentation/dist
+
+      - name: Run Marp conversion inside Docker
         run: |
-          mkdir -p presentation/dist
-
-          cat <<'EOF' > marp-run.sh
-          for file in presentation/*.md; do
-            name=$(basename "$file" .md)
-            marp "$file" --pdf --allow-local-files --output "presentation/dist/$name.pdf"
-            marp "$file" --pptx --allow-local-files --output "presentation/dist/$name.pptx"
-          done
-          EOF
-
-          chmod +x marp-run.sh
-
           docker run --rm \
             -v "$PWD:$PWD" \
             -w "$PWD" \
