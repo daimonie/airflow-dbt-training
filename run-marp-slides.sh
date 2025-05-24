@@ -1,5 +1,6 @@
 #!/bin/sh
 mkdir -p tmp/presentation/dist
+chmod -R a+rwx tmp/presentation
 
 for file in presentation/*.md; do
   name=$(basename "$file" .md)
