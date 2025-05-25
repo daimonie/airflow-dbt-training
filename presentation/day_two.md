@@ -14,6 +14,18 @@ paginate: true
   --color-table-header-text: #ffffff; /* white text on dark green */
 }
 
+section {
+  font-size: 24px;  /* Base font size for slides */
+}
+
+h1 {
+  font-size: 1.6em;  /* Relative to section font size */
+}
+
+h2 {
+  font-size: 1.3em;  /* Relative to section font size */
+}
+
 /* Optional: style table headers if using standard Markdown tables */
 table th {
   background-color: var(--color-table-header);
@@ -415,7 +427,7 @@ models:
         description: Location type with proper capitalization
         tests:
           - not_null
-````
+```
 
 ---
 
