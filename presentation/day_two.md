@@ -6,7 +6,7 @@ paginate: true
 
 <style>
 :root {
-  --color-background: #f4fdf4;     /* pale green-tinted white */
+  --color-background: #ffffff;     /* pure white */
   --color-foreground: #1f331f;     /* deep green-black for main text */
   --color-highlight: #228b22;      /* ForestGreen for links and accents */
   --color-dimmed: #6b8f6b;         /* muted desaturated ForestGreen */
@@ -552,7 +552,7 @@ models:
 
 ## Gold Step 1: Move the Pivot to Gold
 
-* This model belongs in the **gold zone** because it’s:
+* This model belongs in the **gold zone** because it's:
 
   * Business-facing: it helps describe region composition.
   * Summarized: not row-level, but region-level aggregates.
@@ -635,7 +635,7 @@ LEFT JOIN {{ ref('region_type_composition') }} r
   * Documentation for interactive lineage and team onboarding
   * Exposure in `dbt docs` and lineage graphs
 
-* Don’t worry about writing complete descriptions now.
+* Don't worry about writing complete descriptions now.
 
   * Focus on meaningful tests and clarity where needed.
 
@@ -710,8 +710,8 @@ models:
 
 ## Open the dbt Docs UI
 
-* Let’s explore the documentation and lineage together!
-* Run this in your terminal (if you haven’t already):
+* Let's explore the documentation and lineage together!
+* Run this in your terminal (if you haven't already):
 
 ```bash
 dbt docs generate
