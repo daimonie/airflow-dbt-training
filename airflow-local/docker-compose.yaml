@@ -17,15 +17,35 @@ services:
       POSTGRES_PASSWORD: airflow
       POSTGRES_DB: dwh
     depends_on:
-      - airflow
+      - airflow-scheduler
     volumes:
       - postgres-db-volume-dwh:/var/lib/postgresql/data
       - ./init_housing_data.sql:/docker-entrypoint-initdb.d/init_housing_data.sql
 
+  airflow-init:
+    image: apache/airflow:2.8.1-python3.10
+    depends_on:
+      - postgres
+    command: >
+      bash -c "pip install --quiet --no-cache-dir -r /requirements.txt &&
+               airflow db init &&
+               airflow db upgrade &&
+               airflow users create --username admin --firstname Admin --lastname User --role Admin --email admin@example.com --password admin || true"
+    environment:
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./plugins:/opt/airflow/plugins
+      - ./requirements.txt:/requirements.txt
+      - airflow-logs:/opt/airflow/logs
+
   airflow:
     image: apache/airflow:2.8.1-python3.10
-    command: >
-      bash -c "pip install --quiet --no-cache-dir -r /requirements.txt && airflow db init &&  airflow db upgrade && airflow users create --username admin --firstname Admin --lastname User --role Admin --email admin@example.com --password admin || true && airflow scheduler & airflow webserver"
+    depends_on:
+      - airflow-init
+    command: airflow webserver
+    ports:
+      - 8080:8080
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
@@ -33,21 +53,28 @@ services:
       AIRFLOW__WEBSERVER__AUTH_USER_REGISTRATION: False
       _AIRFLOW_WWW_USER_USERNAME: admin
       _AIRFLOW_WWW_USER_PASSWORD: admin
-    ports:
-      - 8080:8080
     volumes:
       - ./dags:/opt/airflow/dags
       - ./plugins:/opt/airflow/plugins
       - ./requirements.txt:/requirements.txt
       - airflow-logs:/opt/airflow/logs
+
+  airflow-scheduler:
+    image: apache/airflow:2.8.1-python3.10
     depends_on:
-      - postgres
+      - airflow-init
+    command: airflow scheduler
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./plugins:/opt/airflow/plugins
+      - airflow-logs:/opt/airflow/logs
 
   dbt:
     image: python:3.11-slim
     container_name: dbt
-    volumes:
-      - ./dags/dbt:/dbt
     working_dir: /dbt
     command: >
       sh -c "apt-get update && apt-get install -y git nano &&
@@ -57,6 +84,8 @@ services:
       DBT_PROFILES_DIR: /dbt
     ports:
       - 8081:8081
+    volumes:
+      - ./dags/dbt:/dbt
     depends_on:
       - dwh
 
