@@ -13,13 +13,15 @@ snapshot-paths: ["snapshots"]
 
 target-path: "target"
 clean-targets:
-    - "target"
-    - "dbt_packages"
+  - "target"
+  - "dbt_packages"
 
 models:
   airflow_dbt_training:
     +materialized: view
-    staging:
-      +materialized: view
-    marts:
-      +materialized: table 
+    bronze:
+      +schema: bronze
+    silver:
+      +schema: silver
+    gold:
+      +schema: gold

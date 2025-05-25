@@ -1,0 +1,43 @@
+version: 2
+
+sources:
+  - name: public
+    database: dwh
+    schema: public
+    tables:
+      - name: raw_housing_prices
+        description: Raw housing price data
+        columns:
+          - name: id
+            description: Unique identifier for each record
+            tests:
+              - unique
+              - not_null
+          - name: date
+            description: Date of the housing price record
+            tests:
+              - not_null
+          - name: region
+            description: Region/city where the house is located
+            tests:
+              - not_null
+          - name: price
+            description: Price of the house in the local currency
+            tests:
+              - not_null
+      - name: raw_location_data
+        description: Raw location reference data
+        columns:
+          - name: postcode
+            description: Postal code
+            tests:
+              - unique
+              - not_null
+          - name: region
+            description: Region/city name
+            tests:
+              - not_null
+          - name: type
+            description: Type of location
+            tests:
+              - not_null 
