@@ -48,6 +48,26 @@ table td {
 ## PDF Guide
 # Intro to dbt – Afternoon Session
 
+--- 
+
+## Agenda for This Afternoon
+
+* Introduction to dbt (30 min)
+  * Core concepts and project setup
+  * Development environment
+
+* Building Our First Models (1h)
+  * Creating staging models
+  * Writing and testing SQL
+
+* Advanced dbt Features (1h)
+  * Materializations and marts
+  * Dependencies and DAG structure
+
+* Testing and Documentation (45 min)
+  * Writing tests and docs
+
+
 ---
 
 ## Introduction to dbt – Why This Matters
