@@ -50,7 +50,18 @@ services:
       - airflow-logs:/opt/airflow/logs
     depends_on:
       - postgres
-
+  dbt:
+    image: python:3.11-slim
+    container_name: dbt
+    volumes:
+      - ./dags/dbt:/dbt
+    working_dir: /dbt
+    command: >
+      sh -c "pip install --no-cache-dir dbt-core dbt-postgres && tail -f /dev/null"
+    environment:
+      DBT_PROFILES_DIR: /dbt
+    depends_on:
+      - dwh
 volumes:
   postgres-db-volume:
   postgres-db-volume-dwh:
