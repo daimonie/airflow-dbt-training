@@ -6,6 +6,19 @@ This repository contains training materials for a hands-on session covering Airf
 - Automated generation of PDF and PowerPoint files using Marp CLI
 - A local Docker-based Airflow environment for running the exercises
 
+## Installation
+For following this training, the following installation is recommended:
+- Download Docker desktop
+- Open powershell (`win+r`, type `powershell`, `enter`)
+- run `wsl --install ubuntu`
+- run `wsl --setdefault ubuntu`
+- run `wsl`, set a username and pass you remember
+- check current user (e.g. `cd ~` and `pwd`). If root, `su` to user
+- Make sure of docker permission by using `sudo usermod -aG docker $USER`
+- refresh shell `newgrp docker`
+- run `cd ~ && git clone https://github.com/daimonie/airflow-dbt-training` if public
+- then `cd airflow-dbt-training/airflow-local`
+- `docker compose up`
 ## Contents
 
 - `presentation/` — All slide decks (`.md`) and related assets (images, diagrams)
