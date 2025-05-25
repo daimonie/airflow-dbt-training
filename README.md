@@ -19,6 +19,8 @@ For following this training, the following installation is recommended:
 - run `cd ~ && git clone https://github.com/daimonie/airflow-dbt-training` if public
 - then `cd airflow-dbt-training/airflow-local`
 - `docker compose up`
+
+Trouble shoot: if laptop is slow there is a chance that postgres isn't installed properly when the `airflow webserver` runs and it will crash. just wait for `airflow init` container to finish (or get coffee), then click `run` on `airflow-scheduler` and `airflow-webserver` containers.
 ## Contents
 
 - `presentation/` — All slide decks (`.md`) and related assets (images, diagrams)
