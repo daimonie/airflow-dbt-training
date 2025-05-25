@@ -40,6 +40,7 @@ services:
       - airflow-logs:/opt/airflow/logs
     depends_on:
       - postgres
+      - dbt
 
   dbt:
     image: python:3.11-slim
