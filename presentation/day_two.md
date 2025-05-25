@@ -1,3 +1,39 @@
+---
+marp: true
+theme: gaia
+paginate: true
+---
+
+<style>
+:root {
+  --color-background: #f4fdf4;     /* pale green-tinted white */
+  --color-foreground: #1f331f;     /* deep green-black for main text */
+  --color-highlight: #228b22;      /* ForestGreen for links and accents */
+  --color-dimmed: #6b8f6b;         /* muted desaturated ForestGreen */
+  --color-table-header: #1a5e1a;   /* strong dark green for tables */
+  --color-table-header-text: #ffffff; /* white text on dark green */
+}
+
+/* Optional: style table headers if using standard Markdown tables */
+table th {
+  background-color: var(--color-table-header);
+  color: var(--color-table-header-text);
+  font-weight: bold;
+  padding: 0.4em 0.6em;
+  border-bottom: 2px solid #cccccc;
+}
+
+table td {
+  padding: 0.4em 0.6em;
+  border-bottom: 1px solid #eeeeee;
+}
+</style>
+
+
+<!-- _class: lead -->
+
+# Airflow + dbt Training Day
+## PDF Guide
 # Intro to dbt – Afternoon Session
 
 ---
@@ -162,7 +198,7 @@ WHERE region = '{{ var("region", "north") }}'
 
 ---
 
-## Creating Bronze Models (Hands-On)
+## Creating Bronze Models (Housing Prices)
 
 * In the terminal, run:
 
@@ -179,6 +215,9 @@ FROM public.raw_housing_prices
 
 * Save with `Ctrl+X`, then `Y`, then `Enter`
 
+---
+
+## Creating Bronze Models (Location Data)
 Repeat for location data:
 
 ```bash
@@ -354,7 +393,6 @@ models:
               values: [0,1,2,3,4,5,6]
 ```
 
-````
 
 ---
 
@@ -414,11 +452,7 @@ models:
 ## Run dbt Tests
 
 * Now that your schema files are in place, it's time to validate your models.
-* Run all tests defined in `schema.yml` using:
-
-```bash
-dbt test
-```
+* Run all tests defined in `schema.yml` using `dbt test`
 
 * This command will:
 
@@ -444,8 +478,6 @@ dbt test
 12:11:37  1 of 23 START test accepted_values_stg_housing_prices_day_of_week__0__1__2__3__4__5__6  [RUN]
 12:11:37  3 of 23 START test not_null_stg_housing_prices_date ............................ [RUN]
 12:11:37  3 of 23 PASS not_null_stg_housing_prices_date .................................. [PASS in 0.11s]
-12:11:37  5 of 23 START test not_null_stg_housing_prices_id .............................. [RUN]
-12:11:37  5 of 23 PASS not_null_stg_housing_prices_id .................................... [PASS in 0.12s]
 12:11:38  22 of 23 START test unique_stg_housing_prices_id ............................... [RUN]
 12:11:38  22 of 23 PASS unique_stg_housing_prices_id ..................................... [PASS in 0.06s]
 ```
@@ -460,11 +492,7 @@ dbt test
 * These names are automatically constructed by dbt based on your schema file.
 * Every line tells you what dbt is testing, how long it took, and whether it passed or failed.
 
----
-
-## Break
-
----
+--- 
 
 ## After the Break: What's Next?
 
@@ -552,14 +580,11 @@ WITH type_counts AS (
     COUNT(*) FILTER (WHERE type = 'URBAN') AS urban_count,
     COUNT(*) FILTER (WHERE type = 'RURAL') AS rural_count,
     COUNT(*) AS total_locations
-  FROM {{ ref('stg_location_data') }}
-  GROUP BY region
+  FROM {{ ref('stg_location_data') }} GROUP BY region
 )
 
 SELECT
-  region,
-  urban_count,
-  rural_count,
+  region, urban_count,  rural_count,
   ROUND(urban_count * 1.0 / total_locations, 2) AS pct_urban
 FROM type_counts
 ```
@@ -579,17 +604,12 @@ WITH avg_prices AS (
     region,
     AVG(price) AS avg_price,
     COUNT(*) AS n_sales
-  FROM {{ ref('stg_housing_prices') }}
-  GROUP BY region
+  FROM {{ ref('stg_housing_prices') }} GROUP BY region
 )
 
 SELECT
-  p.region,
-  p.avg_price,
-  p.n_sales,
-  r.urban_count,
-  r.rural_count,
-  r.pct_urban
+  p.region, p.avg_price, p.n_sales,
+  r.urban_count, r.rural_count,  r.pct_urban
 FROM avg_prices p
 LEFT JOIN {{ ref('region_type_composition') }} r
   ON p.region = r.region
@@ -716,6 +736,7 @@ dbt docs serve --port 8081 --host 0.0.0.0
   * You can see **"depends on" / "referenced by"** sections per model.
   * A full **interactive lineage graph** is only available in **dbt Cloud**, which we'll explore tomorrow.
 
+--- 
 ## Wrap-up & Docs
 
 ### What you've learned today:
