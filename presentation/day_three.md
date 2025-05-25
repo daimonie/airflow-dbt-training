@@ -68,7 +68,7 @@ FROM {{ source('public', 'raw_housing_prices') }}
 
 ---
 
-## Hands-On: Create an Incremental Model
+## Hands-On: Create an Incremental Model (Part 1)
 
 ### Step 1: Open the dbt container
 
@@ -76,6 +76,10 @@ FROM {{ source('public', 'raw_housing_prices') }}
 * Go to **Containers / Apps**
 * Click the `dbt` container
 * Open a **terminal** in that container
+
+---
+
+## Hands-On: Create an Incremental Model (Part 2)
 
 ### Step 2: Create a new model file
 
@@ -118,7 +122,7 @@ This line uses **Jinja**, the templating language used in dbt. dbt uses Jinja to
 
 ---
 
-## Run the Incremental Model
+## Run the Incremental Model (Part 1)
 
 ### Step 1: Run the model
 
@@ -129,6 +133,10 @@ dbt run --select incremental_prices
 ```
 
 Check that it says `materialized: incremental`
+
+---
+
+## Run the Incremental Model (Part 2)
 
 ### Step 2: Run it again to test the logic
 
@@ -150,7 +158,7 @@ SELECT COUNT(*) FROM silver.incremental_prices;
 
 ---
 
-## Simulate Updated Data
+## Simulate Updated Data (Part 1)
 
 To simulate new data, we’ll update 10 rows in the **source table**.
 
@@ -163,6 +171,10 @@ To simulate new data, we’ll update 10 rows in the **source table**.
 ```bash
 psql -U postgres -d dwh
 ```
+
+---
+
+## Simulate Updated Data (Part 2)
 
 ### Step 2: Run this SQL command:
 
@@ -182,7 +194,7 @@ Now, we’ll rerun the model to pick up those changes.
 
 ---
 
-## Rerun the Model
+## Rerun the Model (Part 1)
 
 Now rerun the model to test incremental behavior:
 
@@ -194,6 +206,10 @@ dbt run --select incremental_prices
 
 * This should complete quickly if nothing has changed.
 * You should see `0 rows affected` if no new rows were added.
+
+---
+
+## Rerun the Model (Part 2)
 
 ### Check the row count again:
 
@@ -327,7 +343,7 @@ Open a silver model and use:
 SELECT {{ normalize_type('type') }} AS cleaned_type
 ```
 
-Run the model and inspect results.
+Run the model and inspect the results.
 
 ---
 
@@ -366,7 +382,9 @@ dbt test --select test_no_negative_prices
 * `url`: a link to the dashboard or report (optional)
 * `owner`: person responsible for the output (name and email)
 
-### Example:
+---
+
+## Exposures – Example
 
 ```yaml
 exposures:
@@ -406,7 +424,7 @@ Visit: [http://localhost:8081](http://localhost:8081)
 
 ---
 
-## Hands-On: Add a Test Using Macro Logic
+## Hands-On: Add a Test Using Macro Logic (Part 1)
 
 ### Step 1: Reuse the macro
 
@@ -426,6 +444,10 @@ FROM {{ ref('stg_location_data') }}
 WHERE {{ normalize_type('type') }} = 'UNKNOWN'
 ```
 
+---
+
+## Hands-On: Add a Test Using Macro Logic (Part 2)
+
 Save, then run:
 
 ```bash
@@ -434,13 +456,17 @@ dbt test --select test_unexpected_type
 
 ---
 
-## Hands-On: Create a Macro for Price Buckets
+## Hands-On: Create a Macro for Price Buckets (Part 1)
 
 Create a macro that turns price into buckets:
 
 ```bash
 nano macros/price_bucket.sql
 ```
+
+---
+
+## Hands-On: Create a Macro for Price Buckets (Part 2)
 
 Write:
 
@@ -516,6 +542,12 @@ dbt docs serve --port 8081 --host 0.0.0.0
 
 ## Intro to dbt Cloud
 
+* dbt Cloud is a hosted service for dbt projects
+* Removes the need for local setup
+* Lets you manage and monitor data workflows at scale
+
+We’ll walk through each feature and show you how to explore it in your own Cloud workspace.
+
 * Hosted version of dbt with:
 
   * Web IDE
@@ -527,12 +559,146 @@ dbt docs serve --port 8081 --host 0.0.0.0
 
 ---
 
+## Create Your Own dbt Cloud Account
+
+* Everyone creates their **own free account** (1 developer seat included)
+* Visit: [https://cloud.getdbt.com/signup/](https://cloud.getdbt.com/signup/)
+* Use GitHub login if possible (helps with version control)
+* Once inside, follow the onboarding to:
+
+  * Create a new project using the **Jaffle Shop** demo project
+  * Select **BigQuery** as the warehouse (or ask for help setting this up)
+  * Link it to a GitHub repo (optional if you're just exploring)
+
+We’ll use this project to explore dbt Cloud features together.
+
+* Everyone creates their **own free account** (1 developer seat included)
+* Visit: [https://cloud.getdbt.com/signup/](https://cloud.getdbt.com/signup/)
+* Use GitHub login if possible (helps with version control)
+* Once inside, follow the onboarding to:
+
+  * Create a new project (or join one)
+  * Connect to a Git repo (we’ll help)
+
+We’ll use this account to explore dbt Cloud features together.
+
+---
+
 ## Set Up dbt Cloud (Last Hour)
 
-1. Visit [https://cloud.getdbt.com/signup/](https://cloud.getdbt.com/signup/)
-2. Create a free account
-3. Connect to GitHub or paste an existing dbt project
-4. We’ll help connect it to a BigQuery dataset for testing
+If you didn’t set up a project during sign-up:
+
+1. Create a new project in dbt Cloud
+2. Use the **Jaffle Shop** sample repo
+
+   * GitHub: [https://github.com/dbt-labs/jaffle\_shop](https://github.com/dbt-labs/jaffle_shop)
+3. Connect to BigQuery (we’ll help if needed)
+4. Run your first job to test the setup
+
+---
+
+---
+
+## Cloud Feature: Cloud IDE
+
+* Navigate to: **Develop** tab in dbt Cloud
+* A browser-based IDE where you:
+
+  * Edit models, macros, tests
+  * Run models directly
+  * Preview results
+
+No local editor needed!
+
+---
+
+## Cloud Feature: Job Scheduling
+
+* Navigate to: **Deploy > Jobs**
+* Jobs automate `dbt run`, `dbt test`, etc.
+* Set a schedule or trigger manually
+
+Great for running production pipelines.
+
+---
+
+## Cloud Feature: CI/CD Integration
+
+* Navigate to: **Settings > CI/CD**
+* When connected to GitHub, dbt Cloud can:
+
+  * Run tests on pull requests
+  * Validate model changes before merge
+
+This keeps bad SQL from reaching production.
+
+---
+
+## Cloud Feature: Notifications
+
+* Navigate to: **Settings > Notifications**
+* Configure email or Slack alerts for:
+
+  * Failed jobs
+  * Successful jobs
+  * Cancellations
+
+Keeps your team in the loop.
+
+---
+
+## Cloud Feature: Hosted Docs
+
+* Navigate to: **Docs > Generate Docs**
+* dbt Cloud hosts your `dbt docs` UI
+* Same content as local `dbt docs serve`, but always accessible
+
+Share links with teammates!
+
+---
+
+## Cloud Feature: Version Control
+
+* Navigate to: **Develop > Git**
+* Link your dbt project to GitHub/GitLab/Azure
+* Commit and push changes inside dbt Cloud
+
+Works with branches and pull requests.
+
+---
+
+## Cloud Feature: Exposures
+
+* Navigate to: **Docs > Explore > Exposures**
+* Define dashboards, notebooks, or tools that depend on models
+* Helps track ownership and downstream impact
+
+---
+
+## Cloud Feature: dbt Explorer (DAG View)
+
+* Navigate to: **Docs > Explore > DAG tab**
+* Visual graph of your dbt models
+* Click a model to see dependencies, SQL, and metadata
+
+---
+
+## Cloud Feature: Semantic Layer (Enterprise only)
+
+* Note: This feature is available on paid tiers
+* Define reusable metrics across models
+* Central place to align business definitions
+
+---
+
+## Cloud Feature: API Access
+
+* dbt Cloud offers APIs to:
+
+  * Trigger jobs
+  * Fetch test results
+  * Pull metadata
+* Explore: [https://docs.getdbt.com/docs/dbt-cloud/api-v2](https://docs.getdbt.com/docs/dbt-cloud/api-v2)
 
 ---
 
