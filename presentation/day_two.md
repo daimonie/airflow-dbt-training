@@ -270,6 +270,10 @@ Medallion Architecture is a three-layer pattern for organizing data workflows:
 * **Silver**: cleaned and joined data
 * **Gold**: business-level aggregates and facts
 
+<center>
+<img src="@medallion_architecture.png" alt="Medallion Architecture Diagram" width="600"/>
+</center>
+
 Gaining traction in the industry — highlighted in the recent O'Reilly book by Piethein Strengholt, former Microsoft NL CDO and now leading at Nationale Nederlanden.
 
 ---
@@ -827,10 +831,13 @@ dbt docs serve --port 8081 --host 0.0.0.0
   * Click into upstream and downstream dependencies.
   * See columns, descriptions, and test coverage.
 
-* There is **no** full visual lineage graph in dbt Core.
+* There is **no** full visual lineage graph in dbt Core - we'll find that in dbt cloud.
   
   * You can see **"depends on" / "referenced by"** sections per model.
-  * A full **interactive lineage graph** is only available in **dbt Cloud**, which we'll explore tomorrow.
+<center>
+<img src="@dbt_cloud_dependency_graph.png" alt="DBT Cloud Dependency" width="600"/>
+</center>
+
 
 --- 
 
