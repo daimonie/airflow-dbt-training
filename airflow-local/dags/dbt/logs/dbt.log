@@ -7661,3 +7661,650 @@ with relation as (
 [0m12:43:50.084644 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'indirect_selection': 'eager', 'log_cache_events': 'False', 'write_json': 'True', 'partial_parse': 'True', 'cache_selected_only': 'False', 'profiles_dir': '/dbt', 'debug': 'False', 'fail_fast': 'False', 'log_path': '/dbt/logs', 'version_check': 'True', 'warn_error': 'None', 'use_colors': 'True', 'use_experimental_parser': 'False', 'empty': 'None', 'quiet': 'False', 'no_print': 'None', 'log_format': 'default', 'static_parser': 'True', 'warn_error_options': 'WarnErrorOptions(include=[], exclude=[])', 'invocation_command': 'dbt docs serve --port 8081 --host 0.0.0.0', 'target_path': 'None', 'introspect': 'True', 'send_anonymous_usage_stats': 'True'}
 [0m12:43:50.243342 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'project_id', 'label': '77467b08-1d3a-458d-b5af-fe25a42d0e25', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f6a7a263dd0>]}
 [0m12:43:50.304805 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'adapter_info', 'label': '77467b08-1d3a-458d-b5af-fe25a42d0e25', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f6a7cc37310>]}
+[0m16:37:49.581714 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fe3f87f5010>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fe3f8b49910>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fe3f87f4fd0>]}
+
+
+============================== 16:37:49.585374 | 190fd49b-af58-41e9-b3aa-3b91fb784543 ==============================
+[0m16:37:49.585374 [info ] [MainThread]: Running with dbt=1.9.4
+[0m16:37:49.585996 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'indirect_selection': 'eager', 'log_cache_events': 'False', 'write_json': 'True', 'partial_parse': 'True', 'cache_selected_only': 'False', 'warn_error': 'None', 'fail_fast': 'False', 'debug': 'False', 'log_path': '/dbt/logs', 'version_check': 'True', 'profiles_dir': '/dbt', 'use_colors': 'True', 'use_experimental_parser': 'False', 'no_print': 'None', 'quiet': 'False', 'empty': 'False', 'warn_error_options': 'WarnErrorOptions(include=[], exclude=[])', 'static_parser': 'True', 'invocation_command': 'dbt run', 'log_format': 'default', 'target_path': 'None', 'introspect': 'True', 'send_anonymous_usage_stats': 'True'}
+[0m16:37:49.758624 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'project_id', 'label': '190fd49b-af58-41e9-b3aa-3b91fb784543', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fe3f7f05290>]}
+[0m16:37:49.816976 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'adapter_info', 'label': '190fd49b-af58-41e9-b3aa-3b91fb784543', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fe3fb229690>]}
+[0m16:37:49.818206 [info ] [MainThread]: Registered adapter: postgres=1.9.0
+[0m16:37:49.901834 [debug] [MainThread]: checksum: b5597158181700c50f5bc1c71fe28b37a6fb85633dc5323885263678b6bc782c, vars: {}, profile: , target: , version: 1.9.4
+[0m16:37:50.053099 [debug] [MainThread]: Partial parsing enabled: 0 files deleted, 0 files added, 0 files changed.
+[0m16:37:50.053470 [debug] [MainThread]: Partial parsing enabled, no changes found, skipping parsing
+[0m16:37:50.106707 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'load_project', 'label': '190fd49b-af58-41e9-b3aa-3b91fb784543', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fe3f7306dd0>]}
+[0m16:37:50.206275 [debug] [MainThread]: Wrote artifact WritableManifest to /dbt/target/manifest.json
+[0m16:37:50.208740 [debug] [MainThread]: Wrote artifact SemanticManifest to /dbt/target/semantic_manifest.json
+[0m16:37:50.229038 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'resource_counts', 'label': '190fd49b-af58-41e9-b3aa-3b91fb784543', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fe3f836aa50>]}
+[0m16:37:50.229569 [info ] [MainThread]: Found 7 models, 34 data tests, 2 sources, 433 macros
+[0m16:37:50.229917 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'runnable_timing', 'label': '190fd49b-af58-41e9-b3aa-3b91fb784543', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fe3f7704550>]}
+[0m16:37:50.232440 [info ] [MainThread]: 
+[0m16:37:50.232844 [info ] [MainThread]: Concurrency: 4 threads (target='dev')
+[0m16:37:50.233151 [info ] [MainThread]: 
+[0m16:37:50.233977 [debug] [MainThread]: Acquiring new postgres connection 'master'
+[0m16:37:50.240542 [debug] [ThreadPool]: Acquiring new postgres connection 'list_dwh'
+[0m16:37:50.248685 [debug] [ThreadPool]: Acquiring new postgres connection 'list_dwh'
+[0m16:37:50.254784 [debug] [ThreadPool]: Acquiring new postgres connection 'list_dwh'
+[0m16:37:50.262636 [debug] [ThreadPool]: Acquiring new postgres connection 'list_dwh'
+[0m16:37:50.298818 [debug] [ThreadPool]: Using postgres connection "list_dwh"
+[0m16:37:50.299239 [debug] [ThreadPool]: Using postgres connection "list_dwh"
+[0m16:37:50.299603 [debug] [ThreadPool]: On list_dwh: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "connection_name": "list_dwh"} */
+
+    select distinct nspname from pg_namespace
+  
+[0m16:37:50.299937 [debug] [ThreadPool]: Using postgres connection "list_dwh"
+[0m16:37:50.300297 [debug] [ThreadPool]: Using postgres connection "list_dwh"
+[0m16:37:50.300631 [debug] [ThreadPool]: On list_dwh: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "connection_name": "list_dwh"} */
+
+    select distinct nspname from pg_namespace
+  
+[0m16:37:50.301030 [debug] [ThreadPool]: Opening a new connection, currently in state init
+[0m16:37:50.301407 [debug] [ThreadPool]: On list_dwh: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "connection_name": "list_dwh"} */
+
+    select distinct nspname from pg_namespace
+  
+[0m16:37:50.301765 [debug] [ThreadPool]: On list_dwh: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "connection_name": "list_dwh"} */
+
+    select distinct nspname from pg_namespace
+  
+[0m16:37:50.302141 [debug] [ThreadPool]: Opening a new connection, currently in state init
+[0m16:37:50.302742 [debug] [ThreadPool]: Opening a new connection, currently in state init
+[0m16:37:50.303067 [debug] [ThreadPool]: Opening a new connection, currently in state init
+[0m16:37:50.321978 [debug] [ThreadPool]: SQL status: SELECT 7 in 0.021 seconds
+[0m16:37:50.322561 [debug] [ThreadPool]: SQL status: SELECT 7 in 0.019 seconds
+[0m16:37:50.323075 [debug] [ThreadPool]: SQL status: SELECT 7 in 0.020 seconds
+[0m16:37:50.323365 [debug] [ThreadPool]: SQL status: SELECT 7 in 0.021 seconds
+[0m16:37:50.324681 [debug] [ThreadPool]: On list_dwh: Close
+[0m16:37:50.326181 [debug] [ThreadPool]: On list_dwh: Close
+[0m16:37:50.327344 [debug] [ThreadPool]: On list_dwh: Close
+[0m16:37:50.328417 [debug] [ThreadPool]: On list_dwh: Close
+[0m16:37:50.331835 [debug] [ThreadPool]: Re-using an available connection from the pool (formerly list_dwh, now list_dwh_public)
+[0m16:37:50.332439 [debug] [ThreadPool]: Re-using an available connection from the pool (formerly list_dwh, now list_dwh_public_gold)
+[0m16:37:50.338314 [debug] [ThreadPool]: Re-using an available connection from the pool (formerly list_dwh, now list_dwh_public_silver)
+[0m16:37:50.340294 [debug] [ThreadPool]: Using postgres connection "list_dwh_public"
+[0m16:37:50.340937 [debug] [ThreadPool]: Re-using an available connection from the pool (formerly list_dwh, now list_dwh_public_bronze)
+[0m16:37:50.343183 [debug] [ThreadPool]: Using postgres connection "list_dwh_public_gold"
+[0m16:37:50.345524 [debug] [ThreadPool]: Using postgres connection "list_dwh_public_silver"
+[0m16:37:50.345930 [debug] [ThreadPool]: On list_dwh_public: BEGIN
+[0m16:37:50.348110 [debug] [ThreadPool]: Using postgres connection "list_dwh_public_bronze"
+[0m16:37:50.348486 [debug] [ThreadPool]: On list_dwh_public_gold: BEGIN
+[0m16:37:50.348840 [debug] [ThreadPool]: On list_dwh_public_silver: BEGIN
+[0m16:37:50.349183 [debug] [ThreadPool]: Opening a new connection, currently in state closed
+[0m16:37:50.349584 [debug] [ThreadPool]: On list_dwh_public_bronze: BEGIN
+[0m16:37:50.349899 [debug] [ThreadPool]: Opening a new connection, currently in state closed
+[0m16:37:50.350227 [debug] [ThreadPool]: Opening a new connection, currently in state closed
+[0m16:37:50.350752 [debug] [ThreadPool]: Opening a new connection, currently in state closed
+[0m16:37:50.357380 [debug] [ThreadPool]: SQL status: BEGIN in 0.007 seconds
+[0m16:37:50.357971 [debug] [ThreadPool]: SQL status: BEGIN in 0.008 seconds
+[0m16:37:50.358451 [debug] [ThreadPool]: Using postgres connection "list_dwh_public_gold"
+[0m16:37:50.358769 [debug] [ThreadPool]: SQL status: BEGIN in 0.010 seconds
+[0m16:37:50.359152 [debug] [ThreadPool]: Using postgres connection "list_dwh_public_silver"
+[0m16:37:50.359499 [debug] [ThreadPool]: SQL status: BEGIN in 0.009 seconds
+[0m16:37:50.359977 [debug] [ThreadPool]: On list_dwh_public_gold: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "connection_name": "list_dwh_public_gold"} */
+select
+      'dwh' as database,
+      tablename as name,
+      schemaname as schema,
+      'table' as type
+    from pg_tables
+    where schemaname ilike 'public_gold'
+    union all
+    select
+      'dwh' as database,
+      viewname as name,
+      schemaname as schema,
+      'view' as type
+    from pg_views
+    where schemaname ilike 'public_gold'
+    union all
+    select
+      'dwh' as database,
+      matviewname as name,
+      schemaname as schema,
+      'materialized_view' as type
+    from pg_matviews
+    where schemaname ilike 'public_gold'
+  
+[0m16:37:50.360524 [debug] [ThreadPool]: Using postgres connection "list_dwh_public"
+[0m16:37:50.361011 [debug] [ThreadPool]: On list_dwh_public_silver: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "connection_name": "list_dwh_public_silver"} */
+select
+      'dwh' as database,
+      tablename as name,
+      schemaname as schema,
+      'table' as type
+    from pg_tables
+    where schemaname ilike 'public_silver'
+    union all
+    select
+      'dwh' as database,
+      viewname as name,
+      schemaname as schema,
+      'view' as type
+    from pg_views
+    where schemaname ilike 'public_silver'
+    union all
+    select
+      'dwh' as database,
+      matviewname as name,
+      schemaname as schema,
+      'materialized_view' as type
+    from pg_matviews
+    where schemaname ilike 'public_silver'
+  
+[0m16:37:50.361452 [debug] [ThreadPool]: Using postgres connection "list_dwh_public_bronze"
+[0m16:37:50.361946 [debug] [ThreadPool]: On list_dwh_public: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "connection_name": "list_dwh_public"} */
+select
+      'dwh' as database,
+      tablename as name,
+      schemaname as schema,
+      'table' as type
+    from pg_tables
+    where schemaname ilike 'public'
+    union all
+    select
+      'dwh' as database,
+      viewname as name,
+      schemaname as schema,
+      'view' as type
+    from pg_views
+    where schemaname ilike 'public'
+    union all
+    select
+      'dwh' as database,
+      matviewname as name,
+      schemaname as schema,
+      'materialized_view' as type
+    from pg_matviews
+    where schemaname ilike 'public'
+  
+[0m16:37:50.362521 [debug] [ThreadPool]: On list_dwh_public_bronze: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "connection_name": "list_dwh_public_bronze"} */
+select
+      'dwh' as database,
+      tablename as name,
+      schemaname as schema,
+      'table' as type
+    from pg_tables
+    where schemaname ilike 'public_bronze'
+    union all
+    select
+      'dwh' as database,
+      viewname as name,
+      schemaname as schema,
+      'view' as type
+    from pg_views
+    where schemaname ilike 'public_bronze'
+    union all
+    select
+      'dwh' as database,
+      matviewname as name,
+      schemaname as schema,
+      'materialized_view' as type
+    from pg_matviews
+    where schemaname ilike 'public_bronze'
+  
+[0m16:37:50.369813 [debug] [ThreadPool]: SQL status: SELECT 5 in 0.007 seconds
+[0m16:37:50.370291 [debug] [ThreadPool]: SQL status: SELECT 2 in 0.007 seconds
+[0m16:37:50.370724 [debug] [ThreadPool]: SQL status: SELECT 2 in 0.009 seconds
+[0m16:37:50.371968 [debug] [ThreadPool]: On list_dwh_public: ROLLBACK
+[0m16:37:50.372309 [debug] [ThreadPool]: SQL status: SELECT 2 in 0.010 seconds
+[0m16:37:50.373428 [debug] [ThreadPool]: On list_dwh_public_bronze: ROLLBACK
+[0m16:37:50.374619 [debug] [ThreadPool]: On list_dwh_public_gold: ROLLBACK
+[0m16:37:50.375845 [debug] [ThreadPool]: On list_dwh_public_silver: ROLLBACK
+[0m16:37:50.376174 [debug] [ThreadPool]: On list_dwh_public: Close
+[0m16:37:50.376797 [debug] [ThreadPool]: On list_dwh_public_bronze: Close
+[0m16:37:50.377232 [debug] [ThreadPool]: On list_dwh_public_gold: Close
+[0m16:37:50.379310 [debug] [ThreadPool]: On list_dwh_public_silver: Close
+[0m16:37:50.385852 [debug] [MainThread]: Using postgres connection "master"
+[0m16:37:50.386189 [debug] [MainThread]: On master: BEGIN
+[0m16:37:50.386435 [debug] [MainThread]: Opening a new connection, currently in state init
+[0m16:37:50.392911 [debug] [MainThread]: SQL status: BEGIN in 0.006 seconds
+[0m16:37:50.393263 [debug] [MainThread]: Using postgres connection "master"
+[0m16:37:50.393822 [debug] [MainThread]: On master: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "connection_name": "master"} */
+with relation as (
+        select
+            pg_rewrite.ev_class as class,
+            pg_rewrite.oid as id
+        from pg_rewrite
+    ),
+    class as (
+        select
+            oid as id,
+            relname as name,
+            relnamespace as schema,
+            relkind as kind
+        from pg_class
+    ),
+    dependency as (
+        select distinct
+            pg_depend.objid as id,
+            pg_depend.refobjid as ref
+        from pg_depend
+    ),
+    schema as (
+        select
+            pg_namespace.oid as id,
+            pg_namespace.nspname as name
+        from pg_namespace
+        where nspname != 'information_schema' and nspname not like 'pg\_%'
+    ),
+    referenced as (
+        select
+            relation.id AS id,
+            referenced_class.name ,
+            referenced_class.schema ,
+            referenced_class.kind
+        from relation
+        join class as referenced_class on relation.class=referenced_class.id
+        where referenced_class.kind in ('r', 'v', 'm')
+    ),
+    relationships as (
+        select
+            referenced.name as referenced_name,
+            referenced.schema as referenced_schema_id,
+            dependent_class.name as dependent_name,
+            dependent_class.schema as dependent_schema_id,
+            referenced.kind as kind
+        from referenced
+        join dependency on referenced.id=dependency.id
+        join class as dependent_class on dependency.ref=dependent_class.id
+        where
+            (referenced.name != dependent_class.name or
+             referenced.schema != dependent_class.schema)
+    )
+
+    select
+        referenced_schema.name as referenced_schema,
+        relationships.referenced_name as referenced_name,
+        dependent_schema.name as dependent_schema,
+        relationships.dependent_name as dependent_name
+    from relationships
+    join schema as dependent_schema on relationships.dependent_schema_id=dependent_schema.id
+    join schema as referenced_schema on relationships.referenced_schema_id=referenced_schema.id
+    group by referenced_schema, referenced_name, dependent_schema, dependent_name
+    order by referenced_schema, referenced_name, dependent_schema, dependent_name;
+[0m16:37:50.403137 [debug] [MainThread]: SQL status: SELECT 9 in 0.009 seconds
+[0m16:37:50.406357 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'runnable_timing', 'label': '190fd49b-af58-41e9-b3aa-3b91fb784543', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fe3f831cd10>]}
+[0m16:37:50.406799 [debug] [MainThread]: On master: ROLLBACK
+[0m16:37:50.407285 [debug] [MainThread]: Using postgres connection "master"
+[0m16:37:50.407561 [debug] [MainThread]: On master: BEGIN
+[0m16:37:50.408156 [debug] [MainThread]: SQL status: BEGIN in 0.000 seconds
+[0m16:37:50.408428 [debug] [MainThread]: On master: COMMIT
+[0m16:37:50.408677 [debug] [MainThread]: Using postgres connection "master"
+[0m16:37:50.408915 [debug] [MainThread]: On master: COMMIT
+[0m16:37:50.409441 [debug] [MainThread]: SQL status: COMMIT in 0.000 seconds
+[0m16:37:50.409721 [debug] [MainThread]: On master: Close
+[0m16:37:50.413151 [debug] [Thread-1 (]: Began running node model.airflow_dbt_training.housing_prices
+[0m16:37:50.413586 [debug] [Thread-2 (]: Began running node model.airflow_dbt_training.location_data
+[0m16:37:50.414156 [info ] [Thread-1 (]: 1 of 7 START sql view model public_bronze.housing_prices ....................... [RUN]
+[0m16:37:50.414707 [debug] [Thread-3 (]: Began running node model.airflow_dbt_training.stg_example
+[0m16:37:50.415278 [info ] [Thread-2 (]: 2 of 7 START sql view model public_bronze.location_data ........................ [RUN]
+[0m16:37:50.416089 [debug] [Thread-4 (]: Began running node model.airflow_dbt_training.stg_location_data
+[0m16:37:50.416779 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly list_dwh_public_silver, now model.airflow_dbt_training.housing_prices)
+[0m16:37:50.417446 [info ] [Thread-3 (]: 3 of 7 START sql view model public.stg_example ................................. [RUN]
+[0m16:37:50.418167 [debug] [Thread-2 (]: Re-using an available connection from the pool (formerly list_dwh_public_gold, now model.airflow_dbt_training.location_data)
+[0m16:37:50.418940 [info ] [Thread-4 (]: 4 of 7 START sql view model public_silver.stg_location_data .................... [RUN]
+[0m16:37:50.419593 [debug] [Thread-1 (]: Began compiling node model.airflow_dbt_training.housing_prices
+[0m16:37:50.420163 [debug] [Thread-3 (]: Re-using an available connection from the pool (formerly list_dwh_public, now model.airflow_dbt_training.stg_example)
+[0m16:37:50.420645 [debug] [Thread-2 (]: Began compiling node model.airflow_dbt_training.location_data
+[0m16:37:50.421095 [debug] [Thread-4 (]: Re-using an available connection from the pool (formerly list_dwh_public_bronze, now model.airflow_dbt_training.stg_location_data)
+[0m16:37:50.431408 [debug] [Thread-1 (]: Writing injected SQL for node "model.airflow_dbt_training.housing_prices"
+[0m16:37:50.431897 [debug] [Thread-3 (]: Began compiling node model.airflow_dbt_training.stg_example
+[0m16:37:50.435516 [debug] [Thread-2 (]: Writing injected SQL for node "model.airflow_dbt_training.location_data"
+[0m16:37:50.436041 [debug] [Thread-4 (]: Began compiling node model.airflow_dbt_training.stg_location_data
+[0m16:37:50.438529 [debug] [Thread-3 (]: Writing injected SQL for node "model.airflow_dbt_training.stg_example"
+[0m16:37:50.438975 [debug] [Thread-1 (]: Began executing node model.airflow_dbt_training.housing_prices
+[0m16:37:50.442140 [debug] [Thread-4 (]: Writing injected SQL for node "model.airflow_dbt_training.stg_location_data"
+[0m16:37:50.453458 [debug] [Thread-2 (]: Began executing node model.airflow_dbt_training.location_data
+[0m16:37:50.459482 [debug] [Thread-3 (]: Began executing node model.airflow_dbt_training.stg_example
+[0m16:37:50.499889 [debug] [Thread-2 (]: Writing runtime sql for node "model.airflow_dbt_training.location_data"
+[0m16:37:50.502335 [debug] [Thread-1 (]: Writing runtime sql for node "model.airflow_dbt_training.housing_prices"
+[0m16:37:50.503240 [debug] [Thread-3 (]: Writing runtime sql for node "model.airflow_dbt_training.stg_example"
+[0m16:37:50.503821 [debug] [Thread-4 (]: Began executing node model.airflow_dbt_training.stg_location_data
+[0m16:37:50.504312 [debug] [Thread-2 (]: Using postgres connection "model.airflow_dbt_training.location_data"
+[0m16:37:50.509071 [debug] [Thread-4 (]: Writing runtime sql for node "model.airflow_dbt_training.stg_location_data"
+[0m16:37:50.509613 [debug] [Thread-1 (]: Using postgres connection "model.airflow_dbt_training.housing_prices"
+[0m16:37:50.510139 [debug] [Thread-2 (]: On model.airflow_dbt_training.location_data: BEGIN
+[0m16:37:50.510542 [debug] [Thread-3 (]: Using postgres connection "model.airflow_dbt_training.stg_example"
+[0m16:37:50.511131 [debug] [Thread-1 (]: On model.airflow_dbt_training.housing_prices: BEGIN
+[0m16:37:50.511604 [debug] [Thread-2 (]: Opening a new connection, currently in state closed
+[0m16:37:50.511997 [debug] [Thread-4 (]: Using postgres connection "model.airflow_dbt_training.stg_location_data"
+[0m16:37:50.512399 [debug] [Thread-3 (]: On model.airflow_dbt_training.stg_example: BEGIN
+[0m16:37:50.512790 [debug] [Thread-1 (]: Opening a new connection, currently in state closed
+[0m16:37:50.513420 [debug] [Thread-4 (]: On model.airflow_dbt_training.stg_location_data: BEGIN
+[0m16:37:50.513808 [debug] [Thread-3 (]: Opening a new connection, currently in state closed
+[0m16:37:50.514389 [debug] [Thread-4 (]: Opening a new connection, currently in state closed
+[0m16:37:50.520019 [debug] [Thread-2 (]: SQL status: BEGIN in 0.008 seconds
+[0m16:37:50.520665 [debug] [Thread-2 (]: Using postgres connection "model.airflow_dbt_training.location_data"
+[0m16:37:50.521725 [debug] [Thread-2 (]: On model.airflow_dbt_training.location_data: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "node_id": "model.airflow_dbt_training.location_data"} */
+
+  create view "dwh"."public_bronze"."location_data__dbt_tmp"
+    
+    
+  as (
+    SELECT * FROM public.raw_location_data
+  );
+[0m16:37:50.522228 [debug] [Thread-3 (]: SQL status: BEGIN in 0.008 seconds
+[0m16:37:50.523035 [debug] [Thread-3 (]: Using postgres connection "model.airflow_dbt_training.stg_example"
+[0m16:37:50.523608 [debug] [Thread-4 (]: SQL status: BEGIN in 0.009 seconds
+[0m16:37:50.524185 [debug] [Thread-3 (]: On model.airflow_dbt_training.stg_example: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "node_id": "model.airflow_dbt_training.stg_example"} */
+
+  create view "dwh"."public"."stg_example__dbt_tmp"
+    
+    
+  as (
+    with source_data as (
+    select 1 as id, 'test' as name
+    union all
+    select 2 as id, 'example' as name
+)
+
+select *
+from source_data
+  );
+[0m16:37:50.524748 [debug] [Thread-1 (]: SQL status: BEGIN in 0.012 seconds
+[0m16:37:50.525339 [debug] [Thread-4 (]: Using postgres connection "model.airflow_dbt_training.stg_location_data"
+[0m16:37:50.525988 [debug] [Thread-1 (]: Using postgres connection "model.airflow_dbt_training.housing_prices"
+[0m16:37:50.526477 [debug] [Thread-4 (]: On model.airflow_dbt_training.stg_location_data: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "node_id": "model.airflow_dbt_training.stg_location_data"} */
+
+  create view "dwh"."public_silver"."stg_location_data__dbt_tmp"
+    
+    
+  as (
+    WITH source AS (
+    SELECT * FROM "dwh"."public"."raw_location_data"
+)
+
+SELECT
+    postcode,
+    UPPER(region) as region,
+    -- INITCAP capitalizes the first letter of each word and makes the rest lowercase
+    -- e.g. 'URBAN' -> 'Urban', 'rural' -> 'Rural'
+    INITCAP(type) as type
+FROM source
+  );
+[0m16:37:50.526949 [debug] [Thread-1 (]: On model.airflow_dbt_training.housing_prices: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "node_id": "model.airflow_dbt_training.housing_prices"} */
+
+  create view "dwh"."public_bronze"."housing_prices__dbt_tmp"
+    
+    
+  as (
+    SELECT * 
+FROM "dwh"."public"."raw_housing_prices"
+  );
+[0m16:37:50.530661 [debug] [Thread-4 (]: SQL status: CREATE VIEW in 0.003 seconds
+[0m16:37:50.536566 [debug] [Thread-1 (]: SQL status: CREATE VIEW in 0.009 seconds
+[0m16:37:50.537188 [debug] [Thread-3 (]: SQL status: CREATE VIEW in 0.011 seconds
+[0m16:37:50.539269 [debug] [Thread-4 (]: Using postgres connection "model.airflow_dbt_training.stg_location_data"
+[0m16:37:50.539684 [debug] [Thread-2 (]: SQL status: CREATE VIEW in 0.017 seconds
+[0m16:37:50.543078 [debug] [Thread-1 (]: Using postgres connection "model.airflow_dbt_training.housing_prices"
+[0m16:37:50.547342 [debug] [Thread-3 (]: Using postgres connection "model.airflow_dbt_training.stg_example"
+[0m16:37:50.547860 [debug] [Thread-4 (]: On model.airflow_dbt_training.stg_location_data: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "node_id": "model.airflow_dbt_training.stg_location_data"} */
+alter table "dwh"."public_silver"."stg_location_data" rename to "stg_location_data__dbt_backup"
+[0m16:37:50.594861 [debug] [Thread-1 (]: On model.airflow_dbt_training.housing_prices: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "node_id": "model.airflow_dbt_training.housing_prices"} */
+alter table "dwh"."public_bronze"."housing_prices" rename to "housing_prices__dbt_backup"
+[0m16:37:50.596624 [debug] [Thread-2 (]: Using postgres connection "model.airflow_dbt_training.location_data"
+[0m16:37:50.597083 [debug] [Thread-3 (]: On model.airflow_dbt_training.stg_example: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "node_id": "model.airflow_dbt_training.stg_example"} */
+alter table "dwh"."public"."stg_example" rename to "stg_example__dbt_backup"
+[0m16:37:50.597753 [debug] [Thread-2 (]: On model.airflow_dbt_training.location_data: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "node_id": "model.airflow_dbt_training.location_data"} */
+alter table "dwh"."public_bronze"."location_data" rename to "location_data__dbt_backup"
+[0m16:37:50.598195 [debug] [Thread-1 (]: SQL status: ALTER TABLE in 0.001 seconds
+[0m16:37:50.598710 [debug] [Thread-4 (]: SQL status: ALTER TABLE in 0.001 seconds
+[0m16:37:50.599136 [debug] [Thread-3 (]: SQL status: ALTER TABLE in 0.000 seconds
+[0m16:37:50.602909 [debug] [Thread-1 (]: Using postgres connection "model.airflow_dbt_training.housing_prices"
+[0m16:37:50.603425 [debug] [Thread-2 (]: SQL status: ALTER TABLE in 0.004 seconds
+[0m16:37:50.606773 [debug] [Thread-4 (]: Using postgres connection "model.airflow_dbt_training.stg_location_data"
+[0m16:37:50.609924 [debug] [Thread-3 (]: Using postgres connection "model.airflow_dbt_training.stg_example"
+[0m16:37:50.610445 [debug] [Thread-1 (]: On model.airflow_dbt_training.housing_prices: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "node_id": "model.airflow_dbt_training.housing_prices"} */
+alter table "dwh"."public_bronze"."housing_prices__dbt_tmp" rename to "housing_prices"
+[0m16:37:50.613561 [debug] [Thread-2 (]: Using postgres connection "model.airflow_dbt_training.location_data"
+[0m16:37:50.614030 [debug] [Thread-4 (]: On model.airflow_dbt_training.stg_location_data: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "node_id": "model.airflow_dbt_training.stg_location_data"} */
+alter table "dwh"."public_silver"."stg_location_data__dbt_tmp" rename to "stg_location_data"
+[0m16:37:50.614501 [debug] [Thread-3 (]: On model.airflow_dbt_training.stg_example: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "node_id": "model.airflow_dbt_training.stg_example"} */
+alter table "dwh"."public"."stg_example__dbt_tmp" rename to "stg_example"
+[0m16:37:50.615056 [debug] [Thread-2 (]: On model.airflow_dbt_training.location_data: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "node_id": "model.airflow_dbt_training.location_data"} */
+alter table "dwh"."public_bronze"."location_data__dbt_tmp" rename to "location_data"
+[0m16:37:50.615584 [debug] [Thread-1 (]: SQL status: ALTER TABLE in 0.001 seconds
+[0m16:37:50.616192 [debug] [Thread-4 (]: SQL status: ALTER TABLE in 0.001 seconds
+[0m16:37:50.621975 [debug] [Thread-3 (]: SQL status: ALTER TABLE in 0.006 seconds
+[0m16:37:50.622411 [debug] [Thread-2 (]: SQL status: ALTER TABLE in 0.006 seconds
+[0m16:37:50.637147 [debug] [Thread-4 (]: On model.airflow_dbt_training.stg_location_data: COMMIT
+[0m16:37:50.640699 [debug] [Thread-1 (]: On model.airflow_dbt_training.housing_prices: COMMIT
+[0m16:37:50.642233 [debug] [Thread-3 (]: On model.airflow_dbt_training.stg_example: COMMIT
+[0m16:37:50.643573 [debug] [Thread-2 (]: On model.airflow_dbt_training.location_data: COMMIT
+[0m16:37:50.644000 [debug] [Thread-4 (]: Using postgres connection "model.airflow_dbt_training.stg_location_data"
+[0m16:37:50.644432 [debug] [Thread-1 (]: Using postgres connection "model.airflow_dbt_training.housing_prices"
+[0m16:37:50.644849 [debug] [Thread-3 (]: Using postgres connection "model.airflow_dbt_training.stg_example"
+[0m16:37:50.645267 [debug] [Thread-2 (]: Using postgres connection "model.airflow_dbt_training.location_data"
+[0m16:37:50.645733 [debug] [Thread-4 (]: On model.airflow_dbt_training.stg_location_data: COMMIT
+[0m16:37:50.646264 [debug] [Thread-1 (]: On model.airflow_dbt_training.housing_prices: COMMIT
+[0m16:37:50.646689 [debug] [Thread-3 (]: On model.airflow_dbt_training.stg_example: COMMIT
+[0m16:37:50.647096 [debug] [Thread-2 (]: On model.airflow_dbt_training.location_data: COMMIT
+[0m16:37:50.650415 [debug] [Thread-4 (]: SQL status: COMMIT in 0.003 seconds
+[0m16:37:50.657244 [debug] [Thread-4 (]: Applying DROP to: "dwh"."public_silver"."stg_location_data__dbt_backup"
+[0m16:37:50.657855 [debug] [Thread-1 (]: SQL status: COMMIT in 0.010 seconds
+[0m16:37:50.658241 [debug] [Thread-3 (]: SQL status: COMMIT in 0.011 seconds
+[0m16:37:50.658758 [debug] [Thread-2 (]: SQL status: COMMIT in 0.011 seconds
+[0m16:37:50.663994 [debug] [Thread-4 (]: Using postgres connection "model.airflow_dbt_training.stg_location_data"
+[0m16:37:50.666883 [debug] [Thread-1 (]: Applying DROP to: "dwh"."public_bronze"."housing_prices__dbt_backup"
+[0m16:37:50.669695 [debug] [Thread-3 (]: Applying DROP to: "dwh"."public"."stg_example__dbt_backup"
+[0m16:37:50.672474 [debug] [Thread-2 (]: Applying DROP to: "dwh"."public_bronze"."location_data__dbt_backup"
+[0m16:37:50.672961 [debug] [Thread-4 (]: On model.airflow_dbt_training.stg_location_data: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "node_id": "model.airflow_dbt_training.stg_location_data"} */
+drop view if exists "dwh"."public_silver"."stg_location_data__dbt_backup" cascade
+[0m16:37:50.673677 [debug] [Thread-1 (]: Using postgres connection "model.airflow_dbt_training.housing_prices"
+[0m16:37:50.674362 [debug] [Thread-3 (]: Using postgres connection "model.airflow_dbt_training.stg_example"
+[0m16:37:50.675015 [debug] [Thread-2 (]: Using postgres connection "model.airflow_dbt_training.location_data"
+[0m16:37:50.675548 [debug] [Thread-1 (]: On model.airflow_dbt_training.housing_prices: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "node_id": "model.airflow_dbt_training.housing_prices"} */
+drop view if exists "dwh"."public_bronze"."housing_prices__dbt_backup" cascade
+[0m16:37:50.676024 [debug] [Thread-3 (]: On model.airflow_dbt_training.stg_example: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "node_id": "model.airflow_dbt_training.stg_example"} */
+drop view if exists "dwh"."public"."stg_example__dbt_backup" cascade
+[0m16:37:50.676494 [debug] [Thread-2 (]: On model.airflow_dbt_training.location_data: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "node_id": "model.airflow_dbt_training.location_data"} */
+drop view if exists "dwh"."public_bronze"."location_data__dbt_backup" cascade
+[0m16:37:50.681222 [debug] [Thread-3 (]: SQL status: DROP VIEW in 0.004 seconds
+[0m16:37:50.683701 [debug] [Thread-3 (]: On model.airflow_dbt_training.stg_example: Close
+[0m16:37:50.684326 [debug] [Thread-2 (]: SQL status: DROP VIEW in 0.007 seconds
+[0m16:37:50.686319 [debug] [Thread-4 (]: SQL status: DROP VIEW in 0.011 seconds
+[0m16:37:50.687830 [debug] [Thread-2 (]: On model.airflow_dbt_training.location_data: Close
+[0m16:37:50.688180 [debug] [Thread-1 (]: SQL status: DROP VIEW in 0.011 seconds
+[0m16:37:50.688584 [debug] [Thread-3 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': '190fd49b-af58-41e9-b3aa-3b91fb784543', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fe3f8f7dc10>]}
+[0m16:37:50.689949 [debug] [Thread-4 (]: On model.airflow_dbt_training.stg_location_data: Close
+[0m16:37:50.690594 [debug] [Thread-2 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': '190fd49b-af58-41e9-b3aa-3b91fb784543', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fe3f8f0a190>]}
+[0m16:37:50.691887 [debug] [Thread-1 (]: On model.airflow_dbt_training.housing_prices: Close
+[0m16:37:50.692593 [info ] [Thread-3 (]: 3 of 7 OK created sql view model public.stg_example ............................ [[32mCREATE VIEW[0m in 0.26s]
+[0m16:37:50.693998 [debug] [Thread-4 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': '190fd49b-af58-41e9-b3aa-3b91fb784543', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fe3fb0e9710>]}
+[0m16:37:50.695005 [debug] [Thread-3 (]: Finished running node model.airflow_dbt_training.stg_example
+[0m16:37:50.693425 [info ] [Thread-2 (]: 2 of 7 OK created sql view model public_bronze.location_data ................... [[32mCREATE VIEW[0m in 0.27s]
+[0m16:37:50.695852 [debug] [Thread-1 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': '190fd49b-af58-41e9-b3aa-3b91fb784543', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fe3f4259690>]}
+[0m16:37:50.696689 [info ] [Thread-4 (]: 4 of 7 OK created sql view model public_silver.stg_location_data ............... [[32mCREATE VIEW[0m in 0.27s]
+[0m16:37:50.697941 [debug] [Thread-2 (]: Finished running node model.airflow_dbt_training.location_data
+[0m16:37:50.698734 [info ] [Thread-1 (]: 1 of 7 OK created sql view model public_bronze.housing_prices .................. [[32mCREATE VIEW[0m in 0.28s]
+[0m16:37:50.699660 [debug] [Thread-4 (]: Finished running node model.airflow_dbt_training.stg_location_data
+[0m16:37:50.700619 [debug] [Thread-1 (]: Finished running node model.airflow_dbt_training.housing_prices
+[0m16:37:50.701945 [debug] [Thread-3 (]: Began running node model.airflow_dbt_training.region_type_composition
+[0m16:37:50.702711 [debug] [Thread-4 (]: Began running node model.airflow_dbt_training.stg_housing_prices
+[0m16:37:50.703576 [info ] [Thread-3 (]: 5 of 7 START sql view model public_gold.region_type_composition ................ [RUN]
+[0m16:37:50.704509 [info ] [Thread-4 (]: 6 of 7 START sql view model public_silver.stg_housing_prices ................... [RUN]
+[0m16:37:50.705249 [debug] [Thread-3 (]: Re-using an available connection from the pool (formerly model.airflow_dbt_training.stg_example, now model.airflow_dbt_training.region_type_composition)
+[0m16:37:50.706046 [debug] [Thread-4 (]: Re-using an available connection from the pool (formerly model.airflow_dbt_training.stg_location_data, now model.airflow_dbt_training.stg_housing_prices)
+[0m16:37:50.706683 [debug] [Thread-3 (]: Began compiling node model.airflow_dbt_training.region_type_composition
+[0m16:37:50.707432 [debug] [Thread-4 (]: Began compiling node model.airflow_dbt_training.stg_housing_prices
+[0m16:37:50.711534 [debug] [Thread-3 (]: Writing injected SQL for node "model.airflow_dbt_training.region_type_composition"
+[0m16:37:50.716955 [debug] [Thread-4 (]: Writing injected SQL for node "model.airflow_dbt_training.stg_housing_prices"
+[0m16:37:50.717842 [debug] [Thread-3 (]: Began executing node model.airflow_dbt_training.region_type_composition
+[0m16:37:50.721683 [debug] [Thread-3 (]: Writing runtime sql for node "model.airflow_dbt_training.region_type_composition"
+[0m16:37:50.722323 [debug] [Thread-4 (]: Began executing node model.airflow_dbt_training.stg_housing_prices
+[0m16:37:50.726200 [debug] [Thread-4 (]: Writing runtime sql for node "model.airflow_dbt_training.stg_housing_prices"
+[0m16:37:50.726741 [debug] [Thread-3 (]: Using postgres connection "model.airflow_dbt_training.region_type_composition"
+[0m16:37:50.727371 [debug] [Thread-3 (]: On model.airflow_dbt_training.region_type_composition: BEGIN
+[0m16:37:50.727703 [debug] [Thread-3 (]: Opening a new connection, currently in state closed
+[0m16:37:50.728302 [debug] [Thread-4 (]: Using postgres connection "model.airflow_dbt_training.stg_housing_prices"
+[0m16:37:50.728645 [debug] [Thread-4 (]: On model.airflow_dbt_training.stg_housing_prices: BEGIN
+[0m16:37:50.728968 [debug] [Thread-4 (]: Opening a new connection, currently in state closed
+[0m16:37:50.734277 [debug] [Thread-3 (]: SQL status: BEGIN in 0.006 seconds
+[0m16:37:50.734953 [debug] [Thread-3 (]: Using postgres connection "model.airflow_dbt_training.region_type_composition"
+[0m16:37:50.735978 [debug] [Thread-3 (]: On model.airflow_dbt_training.region_type_composition: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "node_id": "model.airflow_dbt_training.region_type_composition"} */
+
+  create view "dwh"."public_gold"."region_type_composition__dbt_tmp"
+    
+    
+  as (
+    WITH type_counts AS (
+  SELECT
+    region,
+    COUNT(*) FILTER (WHERE type = 'URBAN') AS urban_count,
+    COUNT(*) FILTER (WHERE type = 'RURAL') AS rural_count,
+    COUNT(*) AS total_locations
+  FROM "dwh"."public_silver"."stg_location_data"
+  GROUP BY region
+)
+
+SELECT
+  region,
+  urban_count,
+  rural_count,
+  ROUND(urban_count * 1.0 / total_locations, 2) AS pct_urban
+FROM type_counts
+  );
+[0m16:37:50.736711 [debug] [Thread-4 (]: SQL status: BEGIN in 0.008 seconds
+[0m16:37:50.737320 [debug] [Thread-4 (]: Using postgres connection "model.airflow_dbt_training.stg_housing_prices"
+[0m16:37:50.737725 [debug] [Thread-4 (]: On model.airflow_dbt_training.stg_housing_prices: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "node_id": "model.airflow_dbt_training.stg_housing_prices"} */
+
+  create view "dwh"."public_silver"."stg_housing_prices__dbt_tmp"
+    
+    
+  as (
+    WITH source AS (
+    SELECT * FROM "dwh"."public_bronze"."housing_prices"
+)
+
+SELECT
+    id,
+    date::DATE as date,
+    region,
+    price,
+    EXTRACT(YEAR FROM date::DATE) as year,
+    EXTRACT(MONTH FROM date::DATE) as month,
+    EXTRACT(DOW FROM date::DATE) as day_of_week
+FROM source
+  );
+[0m16:37:50.741254 [debug] [Thread-4 (]: SQL status: CREATE VIEW in 0.003 seconds
+[0m16:37:50.744732 [debug] [Thread-4 (]: Using postgres connection "model.airflow_dbt_training.stg_housing_prices"
+[0m16:37:50.745229 [debug] [Thread-3 (]: SQL status: CREATE VIEW in 0.008 seconds
+[0m16:37:50.745713 [debug] [Thread-4 (]: On model.airflow_dbt_training.stg_housing_prices: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "node_id": "model.airflow_dbt_training.stg_housing_prices"} */
+alter table "dwh"."public_silver"."stg_housing_prices__dbt_tmp" rename to "stg_housing_prices"
+[0m16:37:50.749026 [debug] [Thread-3 (]: Using postgres connection "model.airflow_dbt_training.region_type_composition"
+[0m16:37:50.749555 [debug] [Thread-3 (]: On model.airflow_dbt_training.region_type_composition: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "node_id": "model.airflow_dbt_training.region_type_composition"} */
+alter table "dwh"."public_gold"."region_type_composition__dbt_tmp" rename to "region_type_composition"
+[0m16:37:50.749980 [debug] [Thread-4 (]: SQL status: ALTER TABLE in 0.000 seconds
+[0m16:37:50.751216 [debug] [Thread-4 (]: On model.airflow_dbt_training.stg_housing_prices: COMMIT
+[0m16:37:50.751569 [debug] [Thread-4 (]: Using postgres connection "model.airflow_dbt_training.stg_housing_prices"
+[0m16:37:50.751910 [debug] [Thread-4 (]: On model.airflow_dbt_training.stg_housing_prices: COMMIT
+[0m16:37:50.752296 [debug] [Thread-3 (]: SQL status: ALTER TABLE in 0.002 seconds
+[0m16:37:50.753438 [debug] [Thread-3 (]: On model.airflow_dbt_training.region_type_composition: COMMIT
+[0m16:37:50.753763 [debug] [Thread-3 (]: Using postgres connection "model.airflow_dbt_training.region_type_composition"
+[0m16:37:50.754309 [debug] [Thread-3 (]: On model.airflow_dbt_training.region_type_composition: COMMIT
+[0m16:37:50.755193 [debug] [Thread-4 (]: SQL status: COMMIT in 0.003 seconds
+[0m16:37:50.757830 [debug] [Thread-4 (]: Applying DROP to: "dwh"."public_silver"."stg_housing_prices__dbt_backup"
+[0m16:37:50.758562 [debug] [Thread-4 (]: Using postgres connection "model.airflow_dbt_training.stg_housing_prices"
+[0m16:37:50.758943 [debug] [Thread-4 (]: On model.airflow_dbt_training.stg_housing_prices: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "node_id": "model.airflow_dbt_training.stg_housing_prices"} */
+drop view if exists "dwh"."public_silver"."stg_housing_prices__dbt_backup" cascade
+[0m16:37:50.759387 [debug] [Thread-3 (]: SQL status: COMMIT in 0.005 seconds
+[0m16:37:50.761833 [debug] [Thread-3 (]: Applying DROP to: "dwh"."public_gold"."region_type_composition__dbt_backup"
+[0m16:37:50.762436 [debug] [Thread-3 (]: Using postgres connection "model.airflow_dbt_training.region_type_composition"
+[0m16:37:50.762793 [debug] [Thread-3 (]: On model.airflow_dbt_training.region_type_composition: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "node_id": "model.airflow_dbt_training.region_type_composition"} */
+drop view if exists "dwh"."public_gold"."region_type_composition__dbt_backup" cascade
+[0m16:37:50.763253 [debug] [Thread-4 (]: SQL status: DROP VIEW in 0.004 seconds
+[0m16:37:50.764521 [debug] [Thread-4 (]: On model.airflow_dbt_training.stg_housing_prices: Close
+[0m16:37:50.764919 [debug] [Thread-3 (]: SQL status: DROP VIEW in 0.002 seconds
+[0m16:37:50.766129 [debug] [Thread-3 (]: On model.airflow_dbt_training.region_type_composition: Close
+[0m16:37:50.766692 [debug] [Thread-4 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': '190fd49b-af58-41e9-b3aa-3b91fb784543', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fe3f4160110>]}
+[0m16:37:50.767373 [info ] [Thread-4 (]: 6 of 7 OK created sql view model public_silver.stg_housing_prices .............. [[32mCREATE VIEW[0m in 0.06s]
+[0m16:37:50.768127 [debug] [Thread-4 (]: Finished running node model.airflow_dbt_training.stg_housing_prices
+[0m16:37:50.769035 [debug] [Thread-3 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': '190fd49b-af58-41e9-b3aa-3b91fb784543', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fe3f6fcf450>]}
+[0m16:37:50.769779 [info ] [Thread-3 (]: 5 of 7 OK created sql view model public_gold.region_type_composition ........... [[32mCREATE VIEW[0m in 0.06s]
+[0m16:37:50.770458 [debug] [Thread-3 (]: Finished running node model.airflow_dbt_training.region_type_composition
+[0m16:37:50.771672 [debug] [Thread-2 (]: Began running node model.airflow_dbt_training.mart_housing_prices_breakdown
+[0m16:37:50.772606 [info ] [Thread-2 (]: 7 of 7 START sql view model public_gold.mart_housing_prices_breakdown .......... [RUN]
+[0m16:37:50.773316 [debug] [Thread-2 (]: Re-using an available connection from the pool (formerly model.airflow_dbt_training.location_data, now model.airflow_dbt_training.mart_housing_prices_breakdown)
+[0m16:37:50.773947 [debug] [Thread-2 (]: Began compiling node model.airflow_dbt_training.mart_housing_prices_breakdown
+[0m16:37:50.778222 [debug] [Thread-2 (]: Writing injected SQL for node "model.airflow_dbt_training.mart_housing_prices_breakdown"
+[0m16:37:50.778872 [debug] [Thread-2 (]: Began executing node model.airflow_dbt_training.mart_housing_prices_breakdown
+[0m16:37:50.783331 [debug] [Thread-2 (]: Writing runtime sql for node "model.airflow_dbt_training.mart_housing_prices_breakdown"
+[0m16:37:50.783972 [debug] [Thread-2 (]: Using postgres connection "model.airflow_dbt_training.mart_housing_prices_breakdown"
+[0m16:37:50.784403 [debug] [Thread-2 (]: On model.airflow_dbt_training.mart_housing_prices_breakdown: BEGIN
+[0m16:37:50.784734 [debug] [Thread-2 (]: Opening a new connection, currently in state closed
+[0m16:37:50.791513 [debug] [Thread-2 (]: SQL status: BEGIN in 0.007 seconds
+[0m16:37:50.792134 [debug] [Thread-2 (]: Using postgres connection "model.airflow_dbt_training.mart_housing_prices_breakdown"
+[0m16:37:50.792719 [debug] [Thread-2 (]: On model.airflow_dbt_training.mart_housing_prices_breakdown: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "node_id": "model.airflow_dbt_training.mart_housing_prices_breakdown"} */
+
+  create view "dwh"."public_gold"."mart_housing_prices_breakdown__dbt_tmp"
+    
+    
+  as (
+    WITH avg_prices AS (
+  SELECT
+    region,
+    AVG(price) AS avg_price,
+    COUNT(*) AS n_sales
+  FROM "dwh"."public_silver"."stg_housing_prices"
+  GROUP BY region
+)
+
+SELECT
+  p.region,
+  p.avg_price,
+  p.n_sales,
+  r.urban_count,
+  r.rural_count,
+  r.pct_urban
+FROM avg_prices p
+LEFT JOIN "dwh"."public_gold"."region_type_composition" r
+  ON p.region = r.region
+  );
+[0m16:37:50.795462 [debug] [Thread-2 (]: SQL status: CREATE VIEW in 0.002 seconds
+[0m16:37:50.798903 [debug] [Thread-2 (]: Using postgres connection "model.airflow_dbt_training.mart_housing_prices_breakdown"
+[0m16:37:50.799320 [debug] [Thread-2 (]: On model.airflow_dbt_training.mart_housing_prices_breakdown: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "node_id": "model.airflow_dbt_training.mart_housing_prices_breakdown"} */
+alter table "dwh"."public_gold"."mart_housing_prices_breakdown__dbt_tmp" rename to "mart_housing_prices_breakdown"
+[0m16:37:50.800113 [debug] [Thread-2 (]: SQL status: ALTER TABLE in 0.000 seconds
+[0m16:37:50.801497 [debug] [Thread-2 (]: On model.airflow_dbt_training.mart_housing_prices_breakdown: COMMIT
+[0m16:37:50.801994 [debug] [Thread-2 (]: Using postgres connection "model.airflow_dbt_training.mart_housing_prices_breakdown"
+[0m16:37:50.802351 [debug] [Thread-2 (]: On model.airflow_dbt_training.mart_housing_prices_breakdown: COMMIT
+[0m16:37:50.805152 [debug] [Thread-2 (]: SQL status: COMMIT in 0.002 seconds
+[0m16:37:50.807918 [debug] [Thread-2 (]: Applying DROP to: "dwh"."public_gold"."mart_housing_prices_breakdown__dbt_backup"
+[0m16:37:50.808547 [debug] [Thread-2 (]: Using postgres connection "model.airflow_dbt_training.mart_housing_prices_breakdown"
+[0m16:37:50.808890 [debug] [Thread-2 (]: On model.airflow_dbt_training.mart_housing_prices_breakdown: /* {"app": "dbt", "dbt_version": "1.9.4", "profile_name": "default", "target_name": "dev", "node_id": "model.airflow_dbt_training.mart_housing_prices_breakdown"} */
+drop view if exists "dwh"."public_gold"."mart_housing_prices_breakdown__dbt_backup" cascade
+[0m16:37:50.809507 [debug] [Thread-2 (]: SQL status: DROP VIEW in 0.000 seconds
+[0m16:37:50.810789 [debug] [Thread-2 (]: On model.airflow_dbt_training.mart_housing_prices_breakdown: Close
+[0m16:37:50.811383 [debug] [Thread-2 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': '190fd49b-af58-41e9-b3aa-3b91fb784543', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fe3f4161d90>]}
+[0m16:37:50.811966 [info ] [Thread-2 (]: 7 of 7 OK created sql view model public_gold.mart_housing_prices_breakdown ..... [[32mCREATE VIEW[0m in 0.04s]
+[0m16:37:50.812538 [debug] [Thread-2 (]: Finished running node model.airflow_dbt_training.mart_housing_prices_breakdown
+[0m16:37:50.814430 [debug] [MainThread]: Using postgres connection "master"
+[0m16:37:50.814785 [debug] [MainThread]: On master: BEGIN
+[0m16:37:50.815072 [debug] [MainThread]: Opening a new connection, currently in state closed
+[0m16:37:50.822306 [debug] [MainThread]: SQL status: BEGIN in 0.007 seconds
+[0m16:37:50.822768 [debug] [MainThread]: On master: COMMIT
+[0m16:37:50.823212 [debug] [MainThread]: Using postgres connection "master"
+[0m16:37:50.823506 [debug] [MainThread]: On master: COMMIT
+[0m16:37:50.823991 [debug] [MainThread]: SQL status: COMMIT in 0.000 seconds
+[0m16:37:50.824308 [debug] [MainThread]: On master: Close
+[0m16:37:50.824733 [debug] [MainThread]: Connection 'master' was properly closed.
+[0m16:37:50.824969 [debug] [MainThread]: Connection 'model.airflow_dbt_training.housing_prices' was properly closed.
+[0m16:37:50.825234 [debug] [MainThread]: Connection 'model.airflow_dbt_training.region_type_composition' was properly closed.
+[0m16:37:50.825455 [debug] [MainThread]: Connection 'model.airflow_dbt_training.mart_housing_prices_breakdown' was properly closed.
+[0m16:37:50.825672 [debug] [MainThread]: Connection 'model.airflow_dbt_training.stg_housing_prices' was properly closed.
+[0m16:37:50.826031 [info ] [MainThread]: 
+[0m16:37:50.826333 [info ] [MainThread]: Finished running 7 view models in 0 hours 0 minutes and 0.59 seconds (0.59s).
+[0m16:37:50.828437 [debug] [MainThread]: Command end result
+[0m16:37:50.863922 [debug] [MainThread]: Wrote artifact WritableManifest to /dbt/target/manifest.json
+[0m16:37:50.865606 [debug] [MainThread]: Wrote artifact SemanticManifest to /dbt/target/semantic_manifest.json
+[0m16:37:50.871771 [debug] [MainThread]: Wrote artifact RunExecutionResult to /dbt/target/run_results.json
+[0m16:37:50.872107 [info ] [MainThread]: 
+[0m16:37:50.872440 [info ] [MainThread]: [32mCompleted successfully[0m
+[0m16:37:50.872731 [info ] [MainThread]: 
+[0m16:37:50.873115 [info ] [MainThread]: Done. PASS=7 WARN=0 ERROR=0 SKIP=0 TOTAL=7
+[0m16:37:50.874803 [debug] [MainThread]: Resource report: {"command_name": "run", "command_success": true, "command_wall_clock_time": 1.3458685, "process_in_blocks": "65608", "process_kernel_time": 0.172261, "process_mem_max_rss": "121228", "process_out_blocks": "2376", "process_user_time": 2.482599}
+[0m16:37:50.875343 [debug] [MainThread]: Command `dbt run` succeeded at 16:37:50.875235 after 1.35 seconds
+[0m16:37:50.875760 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fe3f884b690>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fe3f8848410>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fe3f8849750>]}
+[0m16:37:50.876123 [debug] [MainThread]: Flushing usage events
+[0m16:37:51.682595 [debug] [MainThread]: An error was encountered while trying to flush usage events

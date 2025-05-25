@@ -45,7 +45,6 @@ table td {
 <!-- _class: lead -->
 
 # Airflow + dbt Training Day
-## PDF Guide
 # Intro to dbt – Afternoon Session
 
 --- 
@@ -220,13 +219,24 @@ WHERE region = '{{ var("region", "north") }}'
 
 ## Bronze Layer – Raw Ingestion
 
-* This is your **Landing Zone**
-* Ingested data, minimal transformation
-* Key goal: capture source as-is with metadata (e.g. timestamps)
-* Examples:
+* This is your **Landing Zone** (Bronze Layer)
+* Acts as the **immutable archive** of your raw data
+* Key characteristics:
+  * Data is stored exactly as received from source systems
+  * Only metadata (like ingestion timestamps) is added
+  * Never modified after ingestion
+  * Serves as single source of truth
+  * Multiple downstream processes can safely read from it
 
+* Examples of raw data preserved:
   * Raw CSV load from CBS
-  * API snapshots
+  * API snapshots (point-in-time copies of API responses, preserving the exact data received from external services)
+
+* These raw sources form the foundation for further transformations
+* Having this clean archive means:
+  * You can always reprocess data if downstream logic changes
+  * Multiple teams can work independently using the same source
+  * Data lineage is clear and traceable
 
 ---
 
@@ -353,12 +363,16 @@ sources:
 ## Silver Layer – Clean & Enriched
 
 * Matches the **Enriched Zone**
-* Data is cleaned, normalized, and made more usable
-* Joins across sources happen here
+* Data is cleaned, normalized, and standardized
+* Each source is handled independently
 * Examples:
 
-  * Joined housing price + postcode table
-  * Currency exchange cleaned and unified
+  * Standardized housing price data with consistent formats
+  * Currency values normalized to a single currency
+  * Data quality issues addressed (nulls, duplicates, etc.)
+  * Consistent naming conventions applied
+
+* Note: Joins between sources are reserved for the Gold layer
 
 ---
 
@@ -451,7 +465,7 @@ models:
 
 ---
 
-## Creating Silver Models (Hands-On)
+## Creating Silver Models (Hands-On)
 
 * Run the following:
 
@@ -460,6 +474,30 @@ dbt run
 ```
 
 * Confirm the new models `stg_housing_prices` and `stg_location_data` exist and are correct
+
+* Let's verify the data in our database:
+
+1. First, connect to the database using psql:
+```bash
+psql -h localhost -U postgres -d dwh
+# When prompted for password, enter: postgres
+```
+
+2. View all tables in the schema:
+```sql
+\dt silver.*;
+```
+
+3. Query our new models:
+```sql
+SELECT * FROM silver.stg_housing_prices LIMIT 5;
+SELECT * FROM silver.stg_location_data LIMIT 5;
+```
+
+4. Exit psql when done:
+```sql
+\q
+```
 
 ---
 
@@ -560,6 +598,30 @@ models:
 | day\_of\_week (0–6, not null) |                             |
 
 * These two tables form the cleaned and standardized foundation for the gold model.
+
+---
+## The Gold Zone: Where Business Logic Lives
+
+* The **gold zone** is where we:
+
+  * Join multiple silver tables together
+  * Apply business logic and calculations
+  * Create aggregated metrics and KPIs
+  * Build final outputs for reporting
+
+* Gold models typically include:
+
+  * Complex joins across domains
+  * Window functions and aggregations
+  * Business rules and transformations
+  * Derived metrics and dimensions
+
+* Why separate joins/aggregates into gold?
+
+  * Keeps silver models clean and reusable
+  * Makes business logic explicit and testable
+  * Creates clear lineage from source to final output
+  * Allows different materialization strategies
 
 ---
 
