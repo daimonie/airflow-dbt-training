@@ -333,7 +333,7 @@ To simulate new data, we'll update 10 rows in the **source table**.
 * Click **Terminal**, then type:
 
 ```bash
-psql -h localhost -U postgres -d dwh
+psql -U postgres -d dwh
 ```
 
 ---
