@@ -25,7 +25,31 @@ Now let's optimize our workflow...
 
 ---
 
-## From Gold to Incremental
+## Agenda – Day 3
+
+Morning Session:
+1. Incremental models
+2. Re-using logic with macros
+3. Custom tests and exposures
+4. Bringing it all together in a guided project
+
+Afternoon Session:
+5. Introduction to dbt Cloud
+6. Cloud features and deployment
+
+---
+
+## Recap & Q&A
+
+* What went well yesterday?
+* Any issues with:
+  * Running models or tests?
+  * Model structure or naming?
+  * Docs or lineage visibility?
+
+---
+
+## Part 1: Incremental Models
 
 Yesterday we built our gold mart:
 ```sql
@@ -41,7 +65,6 @@ SELECT
 FROM avg_prices p
 LEFT JOIN {{ ref('region_type_composition') }} r
   ON p.region = r.region
-
 ```
 
 But what if we have:
@@ -63,35 +86,41 @@ Enter: **Incremental Models**
 
 While dbt incremental models work across all warehouses, modern data warehouses like Snowflake (Dynamic Tables) and BigQuery (Materialized Views) offer native incremental processing. These built-in features automatically handle updates without requiring dbt runs, often with better performance. However, dbt incrementals give you more direct control over the transformation logic and timing.
 
+**Key Points - Incremental Models:**
+- You can now make models process only new/changed data
+- You understand the trade-offs vs native features
+- You can add incremental logic to existing models
 
 ---
 
-## Agenda – Day 3
+## Part 2: Reusing Logic with Macros
 
-Morning Session:
-1. Incremental models
-2. Re-using logic with macros
-3. Custom tests and exposures
-4. Bringing it all together in a guided project
+Two powerful ways to reuse logic:
+- **Macros**: Reusable SQL/Jinja snippets
+- **Custom Tests**: Reusable data quality checks
 
-Afternoon Session:
-5. Introduction to dbt Cloud
-6. Cloud features and deployment
+Let's build both and see how they work together!
 
 ---
 
-## Recap & Q\&A
+## When to Use a Macro
 
-* What went well yesterday?
-* Any issues with:
+Consider creating a macro when you see:
 
-  * Running models or tests?
-  * Model structure or naming?
-  * Docs or lineage visibility?
+1. **Repeated Logic Patterns**
+   * Same CASE statement structure across models
+   * Similar aggregation patterns in multiple places
+   * Identical WHERE clause conditions
 
----
+2. **Complex Transformations**
+   * Multi-step value normalization
+   * Date/time calculations that you use often
+   * Window functions with consistent patterns
 
-## Incremental Models – Logic Pattern
+3. **Business Logic That Might Change**
+   * Status mappings that could evolve
+   * Categorization rules that may need updating
+   * Thresholds that might be adjusted
 
 ```sql
 {{ config(materialized='incremental', unique_key='id') }}
@@ -331,6 +360,11 @@ nano macros/normalize_values.sql
 {%- endmacro -%}
 ```
 
+**Summary - Basic Macros:**
+- You can create reusable SQL snippets
+- You understand Jinja templating basics
+- You can parameterize your macros
+
 ---
 
 ## Using normalize_values
@@ -402,6 +436,11 @@ Create a macro that generates pivot counts for any enum column
 
 Notice how we reuse `normalize_values` inside our new macro!
 
+**Summary - Advanced Macros:**
+- You can create complex, nested macros
+- You understand how to combine macros
+- You can handle dynamic SQL generation
+
 ---
 
 ## Using Macros in Tests
@@ -470,6 +509,11 @@ Run with:
 dbt test --select test_no_negative_prices
 ```
 
+**Key Points - Testing:**
+- You can write custom generic tests
+- You can use macros in your tests
+- You understand when to use each test type
+
 ---
 
 ## Exposures – What Are They?
@@ -478,7 +522,6 @@ dbt test --select test_no_negative_prices
 * It helps with tracking ownership, impact analysis, and documentation
 
 ### Common fields:
-
 * `name`: a unique name for the exposure
 * `type`: usually `dashboard`, `notebook`, or `analysis`
 * `depends_on`: one or more models the exposure uses
@@ -487,18 +530,31 @@ dbt test --select test_no_negative_prices
 
 ---
 
-## Exposures – Example
+## When to Use Exposures
 
-```yaml
-exposures:
-  - name: housing_dashboard
-    type: dashboard
-    depends_on:
-      - ref('mart_housing_prices_breakdown')
-    owner:
-      name: BI Team
-      email: bi@example.com
-```
+Exposures become valuable when your dbt models feed into:
+
+* **BI Tools**
+  * Looker dashboards and explores
+  * Metabase question sets
+  * Tableau workbooks
+  * Power BI reports
+
+* **Analytics Tools**
+  * Jupyter notebooks for data science
+  * Internal analysis tools
+  * Regular reports to stakeholders
+
+* **Business Processes**
+  * Automated reporting systems
+  * KPI monitoring dashboards
+  * Executive dashboards
+
+### Benefits
+* Track which models power which business tools
+* Understand impact of model changes on dashboards
+* Identify ownership and contact points
+* Document the full data lineage from source to end-user
 
 ---
 
@@ -510,7 +566,26 @@ Open the schema file:
 nano models/gold/schema.yml
 ```
 
-Add the `exposures:` block from the previous slide.
+Add this exposure for your dashboard:
+
+```yaml
+exposures:
+  - name: housing_dashboard
+    type: dashboard
+    depends_on:
+      - ref('mart_housing_prices_breakdown')
+    owner:
+      name: BI Team
+      email: bi@example.com
+    url: https://metabase.example.com/dashboard/123
+    description: >
+      Daily housing market KPIs showing:
+      - Average prices by region
+      - Sales volume trends
+      - Listing status distribution
+    maturity: medium  # Options: low, medium, high
+```
+
 Save, then re-run docs:
 
 ```bash
@@ -706,29 +781,104 @@ GROUP BY region, date
 
 ---
 
-## Step 3: Add Tests
+## Step 3: Add Tests - Part 1
 
-Add to your `schema.yml`:
+Let's start by adding a proper unique identifier to our model:
+
+```sql
+-- models/mart_housing_prices_breakdown.sql
+WITH source_data AS (
+    -- ... existing WITH clauses ...
+)
+
+SELECT 
+    CONCAT(region, '_', date::text) as region_date_id,  -- Add this unique identifier
+    region,
+    date,
+    avg_price,
+    n_sales,
+    listing_status,
+    listed_count,
+    pending_count,
+    sold_count
+FROM source_data
+```
+
+Why add a unique identifier?
+* Makes the uniqueness constraint explicit in the data
+* Creates a reliable joining key for downstream models
+* Easier to test and maintain
+
+---
+
+## Step 3: Add Tests - Part 2
+
+Now let's add basic tests to your `schema.yml`:
 
 ```yaml
 models:
   - name: mart_housing_prices_breakdown
     description: "Daily housing prices by region with area composition"
     columns:
+      - name: region_date_id
+        description: "Unique identifier combining region and date"
+        tests:
+          - unique
+          - not_null
+```
+
+These tests ensure:
+* Each region/date combination appears only once
+* We never have missing identifiers
+
+---
+
+## Step 3: Add Tests - Part 3
+
+Add relationship and value tests:
+
+```yaml
+models:
+  - name: mart_housing_prices_breakdown
+    columns:
       - name: region
+        description: "Geographic region identifier"
         tests:
           - not_null
           - relationships:
               to: ref('stg_location_data')
               field: region
+
       - name: listing_status
+        description: "Normalized status of the listing"
         tests:
           - valid_values:
               valid_values: ['LISTED', 'PENDING', 'SOLD']
-    tests:
-      - unique:
-          column_name: "CONCAT(region, date::text)"
 ```
+
+These tests verify:
+* Regions exist in our location data
+* Status values are from our allowed set
+
+---
+
+## Step 3: Add Tests - Benefits
+
+This testing approach provides several advantages:
+
+1. **Better Data Structure**
+   * Unique identifier is part of the model
+   * Constraints are visible in the data
+
+2. **Improved Testing**
+   * Simple, focused tests
+   * Easy to understand and maintain
+   * Clear test failure messages
+
+3. **Downstream Benefits**
+   * Reliable joining key available
+   * Clear documentation
+   * Visible data constraints
 
 ---
 
@@ -781,6 +931,15 @@ exposures:
     maturity: medium
 ```
 
+**Morning Session Progress:**
+- You've learned how to:
+  - Make models process incrementally
+  - Create reusable logic with macros
+  - Write custom tests
+  - Document and expose your work
+
+Time for lunch! When we return, we'll explore dbt Cloud...
+
 ---
 
 ## Afternoon Session: dbt Cloud
@@ -815,15 +974,6 @@ We'll walk through each feature and show you how to explore it in your own Cloud
 
 We'll use this project to explore dbt Cloud features together.
 
-* Everyone creates their **own free account** (1 developer seat included)
-* Visit: [https://cloud.getdbt.com/signup/](https://cloud.getdbt.com/signup/)
-* Use GitHub login if possible (helps with version control)
-* Once inside, follow the onboarding to:
-
-  * Create a new project (or join one)
-  * Connect to a Git repo (we'll help)
-
-We'll use this account to explore dbt Cloud features together.
 
 ---
 
