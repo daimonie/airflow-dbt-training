@@ -9,6 +9,9 @@ on:
       - '.github/workflows/build-presentation-ci.yml'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-slides:
     runs-on: ubuntu-latest
