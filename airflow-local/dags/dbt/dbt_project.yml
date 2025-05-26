@@ -1,4 +1,4 @@
-name: 'airflow_dbt_training'
+name: airflow_dbt_training
 version: '1.0.0'
 config-version: 2
 
@@ -16,12 +16,8 @@ clean-targets:
   - "target"
   - "dbt_packages"
 
+# Only set default materialization if needed
 models:
-  airflow_dbt_training:
-    +materialized: view
-    bronze:
-      +schema: bronze
-    silver:
-      +schema: silver
-    gold:
-      +schema: gold
+  +materialized: view
+
+

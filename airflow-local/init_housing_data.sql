@@ -1503,7 +1503,7 @@ INSERT INTO public.raw_housing_prices (id, date, region, price) VALUES
 (1500, '2023-11-22' , 'Amsterdam', 607448);
 
 
-CREATE TABLE IF NOT EXISTS public.raw_location_data (postcode TEXT, region TEXT, type TEXT);
+CREATE  TABLE IF NOT EXISTS public.raw_location_data (postcode TEXT, region TEXT, type TEXT);
 
 INSERT INTO public.raw_location_data (postcode, region, type) VALUES
 ('1000', 'Rotterdam', 'urban'),

@@ -219,15 +219,34 @@ This line uses **Jinja**, the templating language used in dbt. dbt uses Jinja to
 
 ### Step 1: Initial State - Check Current Data
 
-First, let's see how many rows we have:
+Let's check our starting data. First, connect to the database:
 
+1. Open **Docker Desktop**
+2. Click on **Containers** in the left sidebar
+3. Find and click on the `dwh` container
+4. Click the **Terminal** tab
+5. Connect to the database:
+   ```bash
+   psql -h localhost -U airflow -d dwh
+   ``` 
+---
+## Row Count
+Now check the current row count:
 ```sql
-SELECT COUNT(*) FROM silver.incremental_prices;
+-- First, let's see what tables we have:
+\dt public_silver.*
+
+-- Then check our table:
+SELECT COUNT(*) 
+FROM public_silver.incremental_prices;
+
+-- To see some sample data:
+SELECT * 
+FROM public_silver.incremental_prices 
+LIMIT 5;
 ```
 
-Remember this number - we'll compare after our updates.
-
-Now run the model for the first time:
+If you don't see the table yet, that's expected! We haven't run our dbt model for the first time. Let's do that now:
 
 ```bash
 dbt run --select incremental_prices
@@ -238,39 +257,25 @@ Check that it says `materialized: incremental`
 ---
 
 ## Run the Incremental Model (Part 2)
+###  Initial count
+Now check the current row count:
+```sql
+SELECT COUNT(*) FROM public_silver.incremental_prices;
+```
 
-### Step 2: Process Updated Data
+Remember this number - we'll compare after our updates.
 
-Now rerun the model to pick up the changes we made:
+Now run the model for the second time:
 
 ```bash
 dbt run --select incremental_prices
 ```
 
-What to watch for:
-* Model should report "10 rows affected"
-* Run time should be quick (only processing changed rows)
-* Total row count should stay the same
-
-Why? Because incremental models only process new/changed data.
+Check that it says `materialized: incremental`
 
 ---
 
-## Run the Incremental Model (Part 3)
-
-### Step 3: Verify Incremental Logic
-
-Run the model one more time to verify our logic:
-
-```bash
-dbt run --select incremental_prices
-```
-
-* This run should complete very quickly
-* You should see "0 rows affected" in the output
-* This confirms our incremental logic is working - no unchanged rows are being reprocessed
-
-### Verify Row Counts
+## Verify Row Counts
 
 Let's confirm our data is correct:
 
@@ -310,88 +315,7 @@ Through these runs, we've confirmed:
 This pattern of testing is crucial when developing incremental models - it ensures they'll work reliably in production.
 
 ---
-
-## Simulate Updated Data (Part 1)
-
-To simulate new data, we'll update 10 rows in the **source table**.
-
-### Step 1: Open the `dwh` container
-
-* Open **Docker Desktop**
-* Go to **Containers → dwh**
-* Click **Terminal**, then type:
-
-```bash
-psql -U postgres -d dwh
-```
-
----
-
-## Simulate Updated Data (Part 2)
-
-### Step 2: Run this SQL command:
-
-```sql
-UPDATE public.raw_housing_prices
-SET updated_at = NOW()
-WHERE id IN (
-  SELECT id FROM public.raw_housing_prices
-  ORDER BY RANDOM()
-  LIMIT 10
-);
-```
-
-This will change the `updated_at` field for 10 random rows.
-
-Now, we'll rerun the model to pick up those changes.
-
----
-
-## Rerun the Model (Part 1)
-
-Now rerun the model to test incremental behavior:
-
-In the **dbt container terminal**, type:
-
-```bash
-dbt run --select incremental_prices
-```
-
-* This should complete quickly if nothing has changed.
-* You should see `0 rows affected` if no new rows were added.
-
----
-
-## Rerun the Model (Part 2)
-
-### Check the row count again:
-
-Return to the `dwh` container and connect:
-
-```bash
-psql -h localhost -U postgres -d dwh
-```
-
-Then run:
-
-```sql
-SELECT COUNT(*) FROM silver.incremental_prices;
-```
-
-Only new rows should be added — not duplicates.
-
-* In the same terminal, type:
-
-```bash
-dbt run --select incremental_prices
-```
-
-* Confirm it shows as `incremental`
-* Run it **again** to confirm it only adds new data
-
-
----
-
+   
 ## First Macro: Value Normalization
 
 Let's start with a common need: standardizing values across models.
