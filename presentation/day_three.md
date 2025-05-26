@@ -9,29 +9,74 @@ headingDivider: 2
 
 ---
 
-## Welcome Back! 🚀
+## Welcome Back! 
 
 * What we built yesterday:
-
-  * Bronze → Silver → Gold
+  * Bronze → Silver → Gold layers
   * Schema tests and documentation
   * dbt docs and lineage
-* What you’ll learn today:
 
-  * Smarter ways to model
-  * How to re-use logic in dbt
-  * Advanced tests and exposures
-  * Preview of dbt Cloud
+* Where we ended:
+  * Building gold models with business logic
+  * Joining data across sources
+  * Creating marts for reporting
+
+Now let's optimize our workflow...
+
+---
+
+## From Gold to Incremental
+
+Yesterday we built our gold mart:
+```sql
+WITH avg_prices AS (
+  SELECT
+    region, AVG(price) AS avg_price, COUNT(*) AS n_sales
+  FROM {{ ref('stg_housing_prices') }}
+  GROUP BY region
+)
+SELECT
+  p.region, p.avg_price, p.n_sales,
+  r.urban_count,  r.rural_count, r.pct_urban
+FROM avg_prices p
+LEFT JOIN {{ ref('region_type_composition') }} r
+  ON p.region = r.region
+
+```
+
+But what if we have:
+* Millions of housing prices?
+* Daily updates to process?
+* Limited processing time?
+
+Enter: **Incremental Models**
+
+---
+
+## Incremental Models – Why?
+
+* Large models don't need to reprocess everything every time
+* dbt lets you process **only new or changed rows**
+* This can save time and money in production
+
+### Key Trade-off: dbt vs Native Features
+
+While dbt incremental models work across all warehouses, modern data warehouses like Snowflake (Dynamic Tables) and BigQuery (Materialized Views) offer native incremental processing. These built-in features automatically handle updates without requiring dbt runs, often with better performance. However, dbt incrementals give you more direct control over the transformation logic and timing.
+
 
 ---
 
 ## Agenda – Day 3
 
+Morning Session:
 1. Incremental models
 2. Re-using logic with macros
-3. Custom tests and ownership with exposures
-4. Guided project extension
-5. Intro to dbt Cloud
+3. Custom tests and exposures
+4. Bringing it all together in a guided project
+
+Afternoon Session:
+5. Introduction to dbt Cloud
+6. Cloud features and deployment
 
 ---
 
@@ -43,14 +88,6 @@ headingDivider: 2
   * Running models or tests?
   * Model structure or naming?
   * Docs or lineage visibility?
-
----
-
-## Incremental Models – Why?
-
-* Large models don’t need to reprocess everything every time
-* dbt lets you process **only new or changed rows**
-* This can save time and money in production
 
 ---
 
@@ -140,7 +177,7 @@ Check that it says `materialized: incremental`
 
 ### Step 2: Run it again to test the logic
 
-We’ll now see if dbt *skips* rows it already handled.
+We'll now see if dbt *skips* rows it already handled.
 
 ### Check row count before:
 
@@ -160,7 +197,7 @@ SELECT COUNT(*) FROM silver.incremental_prices;
 
 ## Simulate Updated Data (Part 1)
 
-To simulate new data, we’ll update 10 rows in the **source table**.
+To simulate new data, we'll update 10 rows in the **source table**.
 
 ### Step 1: Open the `dwh` container
 
@@ -190,7 +227,7 @@ WHERE id IN (
 
 This will change the `updated_at` field for 10 random rows.
 
-Now, we’ll rerun the model to pick up those changes.
+Now, we'll rerun the model to pick up those changes.
 
 ---
 
@@ -264,93 +301,159 @@ dbt test --select incremental_prices
 
 ---
 
-## Repetition: Why Reuse Logic?
+## Reusing Logic in dbt
 
-You now have a powerful pattern: models that are efficient and tested.
+Two powerful ways to reuse logic:
+- **Macros**: Reusable SQL/Jinja snippets
+- **Custom Tests**: Reusable data quality checks
 
-But there’s a new challenge:
-
-* We often copy the **same logic** (like `CASE` statements or filters) across models.
-* When the logic changes, we’d have to update it in **many files**.
-
-We want to:
-
-* Write the logic once
-* Use it in multiple places
-* Make updates easier and safer
-
-In dbt, we do this using a tool called a **macro**.
-
-* We often write the **same CASE or filters** in multiple models
-* When the logic changes, we want to change it **once**
-* In dbt, we reuse logic by creating a **macro**
+Let's build both and see how they work together!
 
 ---
 
-## Macros – Example
+## First Macro: Value Normalization
 
-Create a macro to normalize type:
+Let's start with a common need: standardizing values across models.
 
-```jinja
-{% macro normalize_type(column_name) %}
-  CASE
-    WHEN LOWER({{ column_name }}) = 'urban' THEN 'URBAN'
-    WHEN LOWER({{ column_name }}) = 'rural' THEN 'RURAL'
-    ELSE 'UNKNOWN'
-  END
-{% endmacro %}
-```
-
-Use it in a model:
-
-```sql
-SELECT {{ normalize_type('type') }} as type_cleaned
-```
-
----
-
-## Hands-On: Write and Use a Macro
-
-### Step 1: Open the dbt container
-
-(If it’s closed, repeat the Docker Desktop steps)
-
-### Step 2: Open the macros folder
-
+### Step 1: Create the Macro
 ```bash
-nano macros/normalize_type.sql
+nano macros/normalize_values.sql
 ```
 
-Write the macro yourself (no copy-paste):
+```jinja
+{%- macro normalize_values(column_name, accepted_values) -%}
+    CASE
+        {%- for value in accepted_values %}
+        WHEN LOWER({{ column_name }}) = LOWER('{{ value }}') THEN '{{ value }}'
+        {%- endfor %}
+        ELSE 'UNKNOWN'
+    END
+{%- endmacro -%}
+```
+
+---
+
+## Using normalize_values
+
+Example usage in a model:
+```sql
+SELECT 
+    id,
+    {{ normalize_values('type', ['URBAN', 'RURAL', 'SUBURBAN']) }} as normalized_type,
+    {{ normalize_values('status', ['ACTIVE', 'INACTIVE', 'PENDING']) }} as normalized_status
+FROM {{ ref('raw_data') }}
+```
+
+---
+
+## normalize_values: Key Features
+
+The macro provides powerful standardization capabilities:
+
+- **Flexible Inputs**
+  - Takes any column name and list of accepted values
+  - Can be used on any text column needing standardization
+
+- **Smart Processing**
+  - Case-insensitive matching for input values
+  - Standardizes output to the exact casing provided
+  - Returns 'UNKNOWN' for any unmatched values
+
+- **Reusability**
+  - Use across different models and columns
+  - Maintain consistent value handling
+  - Single source of truth for value normalization
+
+---
+
+## Building on normalize_values: A Pivoting Macro
+
+Now that we can normalize values, let's count them efficiently.
+
+### Goal
+Create a macro that generates pivot counts for any enum column
+
+### Specifications
+- Name: `pivot_enum_values`
+- Inputs:
+  - `column_name`: Column to pivot on (e.g. `"type"`)
+  - `values`: List of values to pivot (e.g. `['URBAN', 'RURAL']`)
+- Output: Generated SQL with one count per value
+
+**Hint**: Use a Jinja loop to generate the counts  
+**Bonus Challenge**: Make total count optional with a parameter
+
+---
+
+## Pivoting Macro: Solution
 
 ```jinja
-{% macro normalize_type(column_name) %}
-  CASE
-    WHEN LOWER({{ column_name }}) = 'urban' THEN 'URBAN'
-    WHEN LOWER({{ column_name }}) = 'rural' THEN 'RURAL'
-    ELSE 'UNKNOWN'
-  END
+{% macro pivot_enum_values(column_name, values, include_total=true) %}
+  {% for val in values %}
+    COUNT(*) FILTER (WHERE {{ normalize_values(column_name, [val]) }} = '{{ val }}') AS {{ val | lower }}_count
+    {%- if not loop.last %},{% endif %}
+  {% endfor %}
+  {%- if include_total %}
+    {%- if values|length > 0 %},{% endif %}
+    COUNT(*) AS total_count
+  {%- endif %}
 {% endmacro %}
 ```
 
-Press `Ctrl+X`, then `Y`, then `Enter` to save.
+Notice how we reuse `normalize_values` inside our new macro!
 
-### Step 3: Use the macro
+---
 
-Open a silver model and use:
+## Using Macros in Tests
 
+Now that we have robust value handling, let's ensure data quality.
+
+### Custom Generic Test
 ```sql
-SELECT {{ normalize_type('type') }} AS cleaned_type
+-- tests/generic/test_valid_values.sql
+{% test valid_values(model, column_name, valid_values) %}
+    SELECT *
+    FROM {{ model }}
+    WHERE {{ normalize_values(column_name, valid_values) }} = 'UNKNOWN'
+{% endtest %}
 ```
 
-Run the model and inspect the results.
+### Usage in schema.yml
+```yaml
+models:
+  - name: stg_location_data
+    columns:
+      - name: type
+        tests:
+          - valid_values:
+              valid_values: ['URBAN', 'RURAL']
+```
+
+---
+
+## Extension Ideas
+
+Ways to build on these patterns:
+
+### Macro Enhancements
+- Add custom column name suffixes/prefixes
+- Support for percentage calculations
+- Allow custom aggregations beyond COUNT
+- Add value validation against a source
+
+### Test Extensions
+- Check for unexpected value combinations
+- Validate value distributions
+- Compare values across time periods
 
 ---
 
 ## Custom Tests in dbt
+Apart from macros, you can write your own custom tests that can be re-used within your project for all models.
 
 * A **custom test** is a SQL file that returns 0 rows if things are OK
-* You can reuse a macro **inside** a test
+* Like macros, custom tests are reusable across your project
+* You can even use macros inside your custom tests!
 
 ### Example:
 
@@ -428,7 +531,7 @@ Visit: [http://localhost:8081](http://localhost:8081)
 
 ### Step 1: Reuse the macro
 
-Use your `normalize_type()` macro to build a test that fails if the value isn’t one of the expected ones.
+Use your `normalize_values()` macro to build a test that fails if the value isn't one of the expected ones.
 
 Open:
 
@@ -441,7 +544,7 @@ Paste:
 ```sql
 SELECT *
 FROM {{ ref('stg_location_data') }}
-WHERE {{ normalize_type('type') }} = 'UNKNOWN'
+WHERE {{ normalize_values('type', ['URBAN', 'RURAL', 'SUBURBAN']) }} = 'UNKNOWN'
 ```
 
 ---
@@ -540,13 +643,153 @@ dbt docs serve --port 8081 --host 0.0.0.0
 
 ---
 
-## Intro to dbt Cloud
+## Morning Project: Extend Your Gold Mart!
+
+Now that we've learned about incrementals, macros, tests, and exposures, let's bring it all together!
+
+Let's apply everything we've learned to improve our housing price mart.
+
+### Goals
+1. Make the mart incremental
+2. Add standardized status tracking
+3. Add proper testing
+4. Document everything
+
+---
+
+## Step 1: Make Your Mart Incremental
+
+Convert `mart_housing_prices_breakdown` to process incrementally:
+
+```sql
+{{ config(
+    materialized='incremental',
+    unique_key=['region', 'date']
+) }}
+
+WITH avg_prices AS (
+  SELECT
+    region, 
+    date,
+    AVG(price) AS avg_price,
+    COUNT(*) AS n_sales
+  FROM {{ ref('stg_housing_prices') }}
+  {% if is_incremental() %}
+  WHERE date > (SELECT MAX(date) FROM {{ this }})
+  {% endif %}
+  GROUP BY region, date
+)
+-- ... rest of your existing joins ...
+```
+
+---
+
+## Step 2: Add Status Tracking
+
+1. Create a status normalization macro:
+```sql
+-- macros/normalize_status.sql
+{%- macro normalize_status(status_column) -%}
+{{ normalize_values(status_column, ['LISTED', 'PENDING', 'SOLD']) }}
+{%- endmacro -%}
+```
+
+2. Add status tracking to your mart:
+```sql
+SELECT 
+    -- ... existing columns ...
+    {{ normalize_status('status') }} as listing_status,
+    {{ pivot_enum_values('status', ['LISTED', 'PENDING', 'SOLD']) }}
+FROM {{ ref('stg_housing_prices') }}
+GROUP BY region, date
+```
+
+---
+
+## Step 3: Add Tests
+
+Add to your `schema.yml`:
+
+```yaml
+models:
+  - name: mart_housing_prices_breakdown
+    description: "Daily housing prices by region with area composition"
+    columns:
+      - name: region
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_location_data')
+              field: region
+      - name: listing_status
+        tests:
+          - valid_values:
+              valid_values: ['LISTED', 'PENDING', 'SOLD']
+    tests:
+      - unique:
+          column_name: "CONCAT(region, date::text)"
+```
+
+---
+
+## Step 4: Document Everything
+
+Update your `schema.yml`:
+
+```yaml
+models:
+  - name: mart_housing_prices_breakdown
+    description: "Daily housing prices by region with area composition"
+    columns:
+      - name: region
+        description: "Geographic region identifier"
+      - name: date
+        description: "Date of the price records"
+      - name: avg_price
+        description: "Average house price in the region for this date"
+      - name: n_sales
+        description: "Number of sales in this region/date"
+      - name: listing_status
+        description: "Normalized status of the listing"
+      - name: listed_count
+        description: "Number of houses currently listed"
+      - name: pending_count
+        description: "Number of houses with pending sales"
+      - name: sold_count
+        description: "Number of completed sales"
+```
+
+---
+
+## Step 5: Create an Exposure
+
+Add to your `schema.yml`:
+
+```yaml
+exposures:
+  - name: regional_housing_dashboard
+    type: dashboard
+    description: >
+      Daily housing market overview showing prices, 
+      sales volumes, and listing status by region
+    depends_on:
+      - ref('mart_housing_prices_breakdown')
+    owner:
+      name: Analytics Team
+      email: analytics@company.com
+    url: https://your-bi-tool.company.com/housing-dashboard
+    maturity: medium
+```
+
+---
+
+## Afternoon Session: dbt Cloud
 
 * dbt Cloud is a hosted service for dbt projects
 * Removes the need for local setup
 * Lets you manage and monitor data workflows at scale
 
-We’ll walk through each feature and show you how to explore it in your own Cloud workspace.
+We'll walk through each feature and show you how to explore it in your own Cloud workspace.
 
 * Hosted version of dbt with:
 
@@ -570,7 +813,7 @@ We’ll walk through each feature and show you how to explore it in your own Clo
   * Select **BigQuery** as the warehouse (or ask for help setting this up)
   * Link it to a GitHub repo (optional if you're just exploring)
 
-We’ll use this project to explore dbt Cloud features together.
+We'll use this project to explore dbt Cloud features together.
 
 * Everyone creates their **own free account** (1 developer seat included)
 * Visit: [https://cloud.getdbt.com/signup/](https://cloud.getdbt.com/signup/)
@@ -578,138 +821,186 @@ We’ll use this project to explore dbt Cloud features together.
 * Once inside, follow the onboarding to:
 
   * Create a new project (or join one)
-  * Connect to a Git repo (we’ll help)
+  * Connect to a Git repo (we'll help)
 
-We’ll use this account to explore dbt Cloud features together.
+We'll use this account to explore dbt Cloud features together.
 
 ---
 
 ## Set Up dbt Cloud (Last Hour)
 
-If you didn’t set up a project during sign-up:
+If you didn't set up a project during sign-up:
 
 1. Create a new project in dbt Cloud
 2. Use the **Jaffle Shop** sample repo
 
    * GitHub: [https://github.com/dbt-labs/jaffle\_shop](https://github.com/dbt-labs/jaffle_shop)
-3. Connect to BigQuery (we’ll help if needed)
+3. Connect to BigQuery (we'll help if needed)
 4. Run your first job to test the setup
-
----
 
 ---
 
 ## Cloud Feature: Cloud IDE
 
-* Navigate to: **Develop** tab in dbt Cloud
-* A browser-based IDE where you:
+* Navigate to: **Develop** tab in dbt Cloud  
+* Explore the in-browser IDE where you can:
 
-  * Edit models, macros, tests
-  * Run models directly
-  * Preview results
+  - Edit models, macros, schema.yml, and tests  
+  - Preview SQL compilation and run results  
+  - Access model documentation via right panel
 
-No local editor needed!
+**Try this**:  
+- Open a model and inspect the compiled SQL
+- Modify a model and run it directly from the UI
+- Check the logs and preview the table output
+
+*Why it matters*: You get reproducible development without needing a local setup — perfect for shared team environments.
 
 ---
 
 ## Cloud Feature: Job Scheduling
 
-* Navigate to: **Deploy > Jobs**
-* Jobs automate `dbt run`, `dbt test`, etc.
-* Set a schedule or trigger manually
+* Navigate to: **Deploy > Jobs**  
+* Jobs automate workflows like:
 
-Great for running production pipelines.
+  - `dbt run`, `dbt test`, `dbt build`
+  - Commands triggered on a schedule or manually
+  - Environment-specific configs (prod vs dev)
+
+**Try this**:  
+- Create a job that runs models daily at 08:00
+- Add `dbt test` as a follow-up command
+- Run manually and inspect job logs
+
+*Why it matters*: Scheduled jobs replace cron scripts and orchestrators for many teams — clean, visible, and easy to debug.
 
 ---
 
 ## Cloud Feature: CI/CD Integration
 
-* Navigate to: **Settings > CI/CD**
-* When connected to GitHub, dbt Cloud can:
+* Navigate to: **Settings > CI/CD**  
+* Integrate with GitHub, GitLab, or Azure DevOps  
+* dbt Cloud runs jobs on pull requests automatically
 
-  * Run tests on pull requests
-  * Validate model changes before merge
+**Try this**:  
+- Link a GitHub repo with an open PR
+- Push a change and see if dbt Cloud tests it
+- Review the test results and logs in the PR
 
-This keeps bad SQL from reaching production.
+*Why it matters*: PR-level validation ensures model changes don't break downstream data — this is how you bring engineering quality to analytics.
 
 ---
 
 ## Cloud Feature: Notifications
 
-* Navigate to: **Settings > Notifications**
-* Configure email or Slack alerts for:
+* Navigate to: **Settings > Notifications**  
+* Configure alerts for:
 
-  * Failed jobs
-  * Successful jobs
-  * Cancellations
+  - Failed or successful jobs
+  - Job cancellations or delays
 
-Keeps your team in the loop.
+**Try this**:  
+- Add a Slack webhook or email address
+- Trigger a job failure (e.g. by testing an invalid ref)
+- Confirm alert delivery
+
+*Why it matters*: Keeps teams informed without manual checking — helps build trust and reliability in the data pipeline.
 
 ---
 
 ## Cloud Feature: Hosted Docs
 
-* Navigate to: **Docs > Generate Docs**
-* dbt Cloud hosts your `dbt docs` UI
-* Same content as local `dbt docs serve`, but always accessible
+* Navigate to: **Docs > Generate Docs**  
+* Hosted version of `dbt docs serve`, always available
 
-Share links with teammates!
+**Try this**:  
+- Generate docs and open the lineage graph
+- Click through a model and inspect its description, columns, and tests
+- Search for an exposure and see dependencies
+
+*Why it matters*: Centralizes documentation and makes model structure transparent across teams — no local server needed.
 
 ---
 
 ## Cloud Feature: Version Control
 
-* Navigate to: **Develop > Git**
-* Link your dbt project to GitHub/GitLab/Azure
-* Commit and push changes inside dbt Cloud
+* Navigate to: **Develop > Git**  
+* Link your project to a Git provider  
+* Edit, commit, and push directly from the IDE
 
-Works with branches and pull requests.
+**Try this**:  
+- Create a new branch and make a model edit
+- Commit the change and push to GitHub
+- Open a PR and let CI kick in
+
+*Why it matters*: Treats data code like software — versioned, reviewed, and controlled. Aligns with modern SDLC practices.
 
 ---
 
 ## Cloud Feature: Exposures
 
-* Navigate to: **Docs > Explore > Exposures**
-* Define dashboards, notebooks, or tools that depend on models
-* Helps track ownership and downstream impact
+* Navigate to: **Docs > Explore > Exposures**  
+* Define dashboards, notebooks, or reports that use dbt models
+
+**Try this**:  
+- Add a new exposure in `schema.yml`
+- Use `depends_on` to link a gold model
+- Refresh docs and view it in the UI
+
+*Why it matters*: Tracks downstream usage and ownership — makes your data lineage go all the way to dashboards and reports.
 
 ---
 
 ## Cloud Feature: dbt Explorer (DAG View)
 
-* Navigate to: **Docs > Explore > DAG tab**
-* Visual graph of your dbt models
-* Click a model to see dependencies, SQL, and metadata
+* Navigate to: **Docs > Explore > DAG tab**  
+* See a visual graph of all dbt models and dependencies
+
+**Try this**:  
+- Click a staging model and see what it feeds into
+- Explore top-down from a mart to understand its lineage
+- Hover to preview SQL or click into model details
+
+*Why it matters*: Helps explain your pipeline to non-engineers and supports debugging and dependency impact analysis.
 
 ---
 
-## Cloud Feature: Semantic Layer (Enterprise only)
+## Cloud Feature: Semantic Layer (Enterprise Only)
 
-* Note: This feature is available on paid tiers
-* Define reusable metrics across models
-* Central place to align business definitions
+* Available only on paid tiers  
+* Lets you define centralized metrics using `metrics:` blocks
+
+**Key concepts**:
+- Reusable definitions like `total_revenue` or `conversion_rate`
+- Queryable from BI tools via dbt's API
+
+*Why it matters*: Aligns business logic across dashboards, tools, and teams — no more conflicting definitions of "active users."
 
 ---
 
 ## Cloud Feature: API Access
 
-* dbt Cloud offers APIs to:
+* dbt Cloud offers APIs for automation and integration
 
-  * Trigger jobs
-  * Fetch test results
-  * Pull metadata
-* Explore: [https://docs.getdbt.com/docs/dbt-cloud/api-v2](https://docs.getdbt.com/docs/dbt-cloud/api-v2)
+**Explore the docs**:  
+[https://docs.getdbt.com/docs/dbt-cloud/api-v2](https://docs.getdbt.com/docs/dbt-cloud/api-v2)
+
+**Common use cases**:
+- Trigger jobs from external systems (e.g. Airflow, Slackbot)
+- Pull metadata for lineage visualization
+- Retrieve run logs or test results programmatically
+
+*Why it matters*: Opens up dbt Cloud to custom orchestration and monitoring tools — great for advanced users and platform teams.
 
 ---
 
-## Wrap-Up 🎓
+## Wrap-Up 
 
-What you’ve learned today:
+What you've learned today:
 
 * How to make models faster with incrementals
 * How to reuse logic using macros
 * How to write your own custom tests
 * How to define and document exposures
 * What dbt Cloud adds to the workflow
-
-Thank you for joining Day 3! 🚀
+ 
