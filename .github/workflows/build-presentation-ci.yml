@@ -20,8 +20,23 @@ jobs:
       - name: Run Marp slide builds
         run: ./run-marp-slides.sh
 
-      - name: Upload slide artifacts
-        uses: actions/upload-artifact@v4
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: presentation-slides
-          path: tmp/presentation/dist/
+          tag_name: slides-${{ github.sha }}
+          release_name: Presentation Slides ${{ github.sha }}
+          draft: false
+          prerelease: false
+
+      - name: Upload PDF Assets
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./tmp/presentation/dist/day_three.pdf
+          asset_name: day_three.pdf
+          asset_content_type: application/pdf
