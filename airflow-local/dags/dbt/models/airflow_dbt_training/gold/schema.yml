@@ -62,3 +62,19 @@ models:
         description: Share of locations that are urban (0–1)
         tests:
           - not_null
+
+exposures:
+  - name: housing_dashboard
+    type: dashboard
+    depends_on:
+      - ref('mart_housing_prices_breakdown')
+    owner:
+      name: BI Team
+      email: bi@example.com
+    url: https://metabase.example.com/dashboard/123
+    description: >
+      Daily housing market KPIs showing:
+      - Average prices by region
+      - Sales volume trends
+      - Listing status distribution
+    maturity: medium  # Options: low, medium, high
