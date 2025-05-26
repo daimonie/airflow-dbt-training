@@ -1,0 +1,64 @@
+version: 2
+
+models:
+  - name: mart_housing_prices_breakdown
+    description: Region-level summary of housing prices with urban/rural composition
+    columns:
+      - name: region
+        description: Region name
+        tests:
+          - not_null
+      - name: avg_price
+        description: Average housing price in the region
+        tests:
+          - not_null
+      - name: n_sales
+        description: Number of sales (rows) for that region
+        tests:
+          - not_null 
+  - name: region_type_composition
+    description: Region-level breakdown of urban and rural location counts
+    columns:
+      - name: region
+        description: Region name
+        tests:
+          - not_null
+      - name: urban_count
+        description: Number of urban locations in the region
+        tests:
+          - not_null
+      - name: rural_count
+        description: Number of rural locations in the region
+        tests:
+          - not_null
+      - name: total_count
+        description: Total number of locations in the region
+        tests:
+          - not_null
+      - name: pct_urban
+        description: Share of locations that are urban (0–1)
+        tests:
+          - not_null
+  - name: region_type_composition_with_macro
+    description: Region-level breakdown of urban and rural location counts
+    columns:
+      - name: region
+        description: Region name
+        tests:
+          - not_null
+      - name: urban_count
+        description: Number of urban locations in the region
+        tests:
+          - not_null
+      - name: rural_count
+        description: Number of rural locations in the region
+        tests:
+          - not_null
+      - name: total_locations
+        description: Total number of locations in the region
+        tests:
+          - not_null
+      - name: pct_urban
+        description: Share of locations that are urban (0–1)
+        tests:
+          - not_null

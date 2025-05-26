@@ -290,32 +290,9 @@ The counts should match, confirming:
 * We haven't created any duplicates
 * All our data is present
 * The incremental logic is working as expected
-
+ 
 ---
-
-## Understanding What We Verified
-
-Through these runs, we've confirmed:
-
-1. **Efficiency**
-   * First run: Created initial table
-   * Second run: Processed only updated rows
-   * Third run: Processed 0 rows (perfect!)
-
-2. **Data Quality**
-   * No duplicates created
-   * All updates captured
-   * Original data preserved
-
-3. **Production Readiness**
-   * Model handles updates correctly
-   * Processing is efficient
-   * Safe to use in production
-
-This pattern of testing is crucial when developing incremental models - it ensures they'll work reliably in production.
-
----
-   
+ 
 ## First Macro: Value Normalization
 
 Let's start with a common need: standardizing values across models.
@@ -353,6 +330,7 @@ SELECT
     {{ normalize_values('status', ['ACTIVE', 'INACTIVE', 'PENDING']) }} as normalized_status
 FROM {{ ref('raw_data') }}
 ```
+Let's apply this macro to our staging model for location data:
 
 ---
 
@@ -412,10 +390,7 @@ Create a macro that generates pivot counts for any enum column
 
 Notice how we reuse `normalize_values` inside our new macro!
 
-**Summary - Advanced Macros:**
-- You can create complex, nested macros
-- You understand how to combine macros
-- You can handle dynamic SQL generation
+Let's use it in our `gold.region_type_composition` model!
 
 ---
 
@@ -443,7 +418,7 @@ models:
           - valid_values:
               valid_values: ['URBAN', 'RURAL']
 ```
-
+Let's add it to the gold zone for `gold.region_type_composition.sql`
 --- 
 
 ## Advanced: Integration Tests
