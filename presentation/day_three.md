@@ -95,11 +95,11 @@ While dbt incremental models work across all warehouses, modern data warehouses 
 
 ## Part 2: Reusing Logic with Macros
 
-Two powerful ways to reuse logic:
+Two powerful ways to reuse logic in dbt:
 - **Macros**: Reusable SQL/Jinja snippets
 - **Custom Tests**: Reusable data quality checks
 
-Let's build both and see how they work together!
+Let's explore how to build and use both effectively!
 
 ---
 
@@ -190,9 +190,17 @@ This line uses **Jinja**, the templating language used in dbt. dbt uses Jinja to
 
 ## Run the Incremental Model (Part 1)
 
-### Step 1: Run the model
+### Step 1: Initial State - Check Current Data
 
-In the same terminal:
+First, let's see how many rows we have:
+
+```sql
+SELECT COUNT(*) FROM silver.incremental_prices;
+```
+
+Remember this number - we'll compare after our updates.
+
+Now run the model for the first time:
 
 ```bash
 dbt run --select incremental_prices
@@ -204,23 +212,75 @@ Check that it says `materialized: incremental`
 
 ## Run the Incremental Model (Part 2)
 
-### Step 2: Run it again to test the logic
+### Step 2: Process Updated Data
 
-We'll now see if dbt *skips* rows it already handled.
-
-### Check row count before:
-
-Open **Docker Desktop**, go to **Containers → dwh**, click **Terminal**, and type:
+Now rerun the model to pick up the changes we made:
 
 ```bash
-psql -U postgres -d dwh
+dbt run --select incremental_prices
 ```
 
-Then inside psql:
+What to watch for:
+* Model should report "10 rows affected"
+* Run time should be quick (only processing changed rows)
+* Total row count should stay the same
+
+Why? Because incremental models only process new/changed data.
+
+---
+
+## Run the Incremental Model (Part 3)
+
+### Step 3: Verify Incremental Logic
+
+Run the model one more time to verify our logic:
+
+```bash
+dbt run --select incremental_prices
+```
+
+* This run should complete very quickly
+* You should see "0 rows affected" in the output
+* This confirms our incremental logic is working - no unchanged rows are being reprocessed
+
+### Verify Row Counts
+
+Let's confirm our data is correct:
 
 ```sql
-SELECT COUNT(*) FROM silver.incremental_prices;
+SELECT 
+    COUNT(*) as total_rows,
+    COUNT(DISTINCT id) as distinct_ids
+FROM silver.incremental_prices;
 ```
+
+The counts should match, confirming:
+* We haven't created any duplicates
+* All our data is present
+* The incremental logic is working as expected
+
+---
+
+## Understanding What We Verified
+
+Through these runs, we've confirmed:
+
+1. **Efficiency**
+   * First run: Created initial table
+   * Second run: Processed only updated rows
+   * Third run: Processed 0 rows (perfect!)
+
+2. **Data Quality**
+   * No duplicates created
+   * All updates captured
+   * Original data preserved
+
+3. **Production Readiness**
+   * Model handles updates correctly
+   * Processing is efficient
+   * Safe to use in production
+
+This pattern of testing is crucial when developing incremental models - it ensures they'll work reliably in production.
 
 ---
 
@@ -235,7 +295,7 @@ To simulate new data, we'll update 10 rows in the **source table**.
 * Click **Terminal**, then type:
 
 ```bash
-psql -U postgres -d dwh
+psql -h localhost -U postgres -d dwh
 ```
 
 ---
@@ -279,10 +339,10 @@ dbt run --select incremental_prices
 
 ### Check the row count again:
 
-Return to the `dwh` container:
+Return to the `dwh` container and connect:
 
 ```bash
-psql -U postgres -d dwh
+psql -h localhost -U postgres -d dwh
 ```
 
 Then run:
@@ -302,41 +362,6 @@ dbt run --select incremental_prices
 * Confirm it shows as `incremental`
 * Run it **again** to confirm it only adds new data
 
----
-
-## Add a Test: No Duplicate IDs
-
-Open the schema file:
-
-```bash
-nano models/silver/schema.yml
-```
-
-Add this under `models:`:
-
-```yaml
-  - name: incremental_prices
-    columns:
-      - name: id
-        tests:
-          - unique
-```
-
-Save and run:
-
-```bash
-dbt test --select incremental_prices
-```
-
----
-
-## Reusing Logic in dbt
-
-Two powerful ways to reuse logic:
-- **Macros**: Reusable SQL/Jinja snippets
-- **Custom Tests**: Reusable data quality checks
-
-Let's build both and see how they work together!
 
 ---
 
@@ -468,6 +493,54 @@ models:
               valid_values: ['URBAN', 'RURAL']
 ```
 
+--- 
+
+## Advanced: Integration Tests
+
+Beyond column-level tests, we can validate relationships between models.
+
+* Test entire data pipelines, not just individual models
+* Catch issues that schema tests might miss
+* Protect business-critical transformations
+
+---
+
+## Example: Row Count Consistency
+
+```sql
+-- tests/test_row_consistency.sql
+SELECT 'Mismatch' AS issue
+WHERE (
+  SELECT COUNT(*) FROM {{ ref('mart_housing_prices_breakdown') }}
+) != (
+  SELECT COUNT(DISTINCT region, date) FROM {{ ref('stg_housing_prices') }}
+)
+```
+
+This ensures:
+- No rows were duplicated or dropped
+- The mart model is consistent with staging
+
+---
+
+## More Integration Test Ideas
+
+Common patterns to consider:
+
+1. **Join Key Validation**
+   - No NULLs in join columns
+   - No missing references
+
+2. **Aggregation Checks**
+   - Totals match across models
+   - No unexpected nulls in aggregates
+
+3. **Business Logic**
+   - Filtering didn't exclude key records
+   - Calculations remain consistent
+
+**Why it matters**: Protects business-critical data pipelines from subtle bugs.
+
 ---
 
 ## Extension Ideas
@@ -520,6 +593,7 @@ dbt test --select test_no_negative_prices
 
 * An **exposure** describes how a model is used, for example in a dashboard, notebook, or report
 * It helps with tracking ownership, impact analysis, and documentation
+* Exposures are defined in your `schema.yml` files, typically alongside the models they reference
 
 ### Common fields:
 * `name`: a unique name for the exposure
@@ -530,45 +604,25 @@ dbt test --select test_no_negative_prices
 
 ---
 
-## When to Use Exposures
-
-Exposures become valuable when your dbt models feed into:
-
-* **BI Tools**
-  * Looker dashboards and explores
-  * Metabase question sets
-  * Tableau workbooks
-  * Power BI reports
-
-* **Analytics Tools**
-  * Jupyter notebooks for data science
-  * Internal analysis tools
-  * Regular reports to stakeholders
-
-* **Business Processes**
-  * Automated reporting systems
-  * KPI monitoring dashboards
-  * Executive dashboards
-
-### Benefits
-* Track which models power which business tools
-* Understand impact of model changes on dashboards
-* Identify ownership and contact points
-* Document the full data lineage from source to end-user
-
----
-
 ## Hands-On: Add an Exposure
 
-Open the schema file:
+### Step 1: Choose the Right Location
+
+Exposures should be defined in the same schema file as their primary source model. In our case, since we're exposing the `mart_housing_prices_breakdown` model, we'll add it to:
 
 ```bash
 nano models/gold/schema.yml
 ```
 
-Add this exposure for your dashboard:
+### Step 2: Add the Exposure Definition
+
+Add this exposure block at the bottom of `models/gold/schema.yml`, after your model definitions:
 
 ```yaml
+# models/gold/schema.yml
+
+# ... existing model definitions remain unchanged ...
+
 exposures:
   - name: housing_dashboard
     type: dashboard
@@ -586,19 +640,23 @@ exposures:
     maturity: medium  # Options: low, medium, high
 ```
 
-Save, then re-run docs:
+### Step 3: Verify Documentation
+
+Generate and view the updated documentation:
 
 ```bash
 dbt docs generate
-```
-
-View the result:
-
-```bash
 dbt docs serve --port 8081 --host 0.0.0.0
 ```
 
 Visit: [http://localhost:8081](http://localhost:8081)
+
+In the docs, you should now see:
+* The exposure listed under the Gold package
+* A clear link to the source model
+* The full description and ownership details
+
+**Note**: Keep exposures close to their primary source models. If you have multiple schema files, add each exposure to the schema file that contains its main source model. This makes maintenance easier and relationships clearer.
 
 ---
 
@@ -715,9 +773,30 @@ Then inspect with:
 ```bash
 dbt docs serve --port 8081 --host 0.0.0.0
 ```
-
 ---
 
+## dbt Artifacts: Under the Hood
+
+Every time you run dbt, it produces structured metadata in JSON format:
+
+| File | Purpose |
+|------|---------|
+| `manifest.json` | All models, tests, sources, refs, macros |
+| `run_results.json` | Execution results: timing, status, errors |
+| `catalog.json` | Column-level metadata and types (from docs) |
+
+You can find them here:
+
+```bash
+target/manifest.json
+target/run_results.json
+target/catalog.json
+```
+
+Note: And as we previously mentioned, the compiled sql queries will be available in dbt docs and in the compiled/ folder
+
+
+---
 ## Morning Project: Extend Your Gold Mart!
 
 Now that we've learned about incrementals, macros, tests, and exposures, let's bring it all together!
@@ -1025,19 +1104,47 @@ If you didn't set up a project during sign-up:
 *Why it matters*: Scheduled jobs replace cron scripts and orchestrators for many teams — clean, visible, and easy to debug.
 
 ---
-
 ## Cloud Feature: CI/CD Integration
 
 * Navigate to: **Settings > CI/CD**  
 * Integrate with GitHub, GitLab, or Azure DevOps  
 * dbt Cloud runs jobs on pull requests automatically
 
-**Try this**:  
-- Link a GitHub repo with an open PR
-- Push a change and see if dbt Cloud tests it
-- Review the test results and logs in the PR
+### Typical Development Flow:
 
-*Why it matters*: PR-level validation ensures model changes don't break downstream data — this is how you bring engineering quality to analytics.
+1. **Create Feature Branch & Make Changes**
+   ```bash
+   git checkout -b feature/add-model
+   # Edit models, tests, docs
+   ```
+
+2. **Open PR & Let CI Run**
+   * Push changes & create PR
+   * dbt Cloud detects PR and runs tests
+   * ✅ Success = Ready to merge
+   * ❌ Failure = Fix issues first
+*Why it matters*: Ensures code quality and data integrity through automated testing before changes reach production. This automated process helps maintain standardized and complete deployments.
+
+---
+
+## dbt Cloud with On-Premise Data
+
+Need to connect dbt Cloud to on-premise databases? You have options:
+
+1. **Allowlisted IPs** (Simplest)
+   * Allow specific dbt Cloud IPs through your firewall
+   * See [docs.getdbt.com](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/ip-addresses)
+
+2. **SSH Tunnel** (Common)
+   * Use a bastion host for secure access
+   * Requires some infrastructure setup
+
+3. **Fully Isolated?**
+   * Use dbt Core + Airflow (like we learned!)
+   * Perfect for isolated environments
+   * Gives you full control over scheduling
+
+Remember: Always involve your security team when connecting cloud services to on-premise data.
 
 ---
 
