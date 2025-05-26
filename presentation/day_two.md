@@ -267,8 +267,8 @@ Medallion Architecture encourages a clear separation of concerns and reproducibi
 Medallion Architecture is a three-layer pattern for organizing data workflows:
 
 * **Bronze**: raw, ingested data
-* **Silver**: cleaned and joined data
-* **Gold**: business-level aggregates and facts
+* **Silver**: cleaned and standardized data, one source at a time
+* **Gold**: joined data, business-level aggregates and facts
 
 <center>
 <img src="medallion_architecture.png" alt="Medallion Architecture Diagram" width="600"/>
@@ -427,17 +427,24 @@ The Silver Layer is the **Enriched Zone**: It acts as a trusted source by defini
 
 - Key characteristics:
   
-  - Data is cleaned, normalized, and standardized.
-  - Joins across sources happen here
-  - Each source is handled independently.
-  - Data quality issues addressed (nulls, duplicates, etc.),
-  - Consistent naming conventions applied.
+  - Each source is handled independently
+  - Data is cleaned, normalized, and standardized
+  - Quality fixes are layered in a single transformation pipeline
+  - Each layer builds on the previous one towards a trusted source
+  - Consistent naming conventions applied
+  - Clear progression from raw to trusted data
 
 - Examples:
   
   - Standardized housing price data with consistent formats
-  
   - Currency values normalized to a single currency
+  - Quality fixes layered in sequence:
+    - Layer 1: Basic type casting and null handling
+    - Layer 2: Business rule validation
+    - Layer 3: Standardization and final checks
+    - Result: Single trusted source table
+
+Note: Joins between sources are strictly reserved for the Gold layer
 
 ---
 
