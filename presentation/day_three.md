@@ -105,10 +105,7 @@ LEFT JOIN {{ ref('region_type_composition') }} r
   ON p.region = r.region
 ```
 
-But what if we have:
-* Millions of housing prices?
-* Daily updates to process?
-* Limited processing time?
+But what if we have millions of housing prices? daily updates to process? Limited processing time or budget?
 
 Enter: **Incremental Models**
 
@@ -160,14 +157,6 @@ Consider creating a macro when you see:
    * Categorization rules that may need updating
    * Thresholds that might be adjusted
 
-```sql
-{{ config(materialized='incremental', unique_key='id') }}
-
-SELECT *
-FROM {{ source('public', 'raw_housing_prices') }}
-{% if is_incremental() %}
-  WHERE updated_at > (SELECT MAX(updated_at) FROM {{ this }})
-{% endif %}
 ```
 
 ---
@@ -620,11 +609,6 @@ Run with:
 dbt test --select test_no_negative_prices
 ```
 
-**Key Points - Testing:**
-- You can write custom generic tests
-- You can use macros in your tests
-- You understand when to use each test type
-
 ---
 
 ## Exposures – What Are They?
@@ -642,17 +626,16 @@ dbt test --select test_no_negative_prices
 
 ---
 
-## Hands-On: Add an Exposure
-
-### Step 1: Choose the Right Location
+## Step 1: Choose the Right Location
 
 Exposures should be defined in the same schema file as their primary source model. In our case, since we're exposing the `mart_housing_prices_breakdown` model, we'll add it to:
 
 ```bash
 nano models/gold/schema.yml
 ```
+---
 
-### Step 2: Add the Exposure Definition
+## Step 2: Add the Exposure Definition
 
 Add this exposure block at the bottom of `models/gold/schema.yml`, after your model definitions:
 
@@ -958,16 +941,14 @@ Add relationship and value tests:
 models:
   - name: mart_housing_prices_breakdown
     columns:
-      - name: region
-        description: "Geographic region identifier"
+      - name: region 
         tests:
           - not_null
           - relationships:
               to: ref('stg_location_data')
               field: region
 
-      - name: listing_status
-        description: "Normalized status of the listing"
+      - name: listing_status 
         tests:
           - valid_values:
               valid_values: ['LISTED', 'PENDING', 'SOLD']
@@ -1036,9 +1017,7 @@ Add to your `schema.yml`:
 exposures:
   - name: regional_housing_dashboard
     type: dashboard
-    description: >
-      Daily housing market overview showing prices, 
-      sales volumes, and listing status by region
+    description: Daily housing market overview showing prices, sales volumes, and listing status by region
     depends_on:
       - ref('mart_housing_prices_breakdown')
     owner:
@@ -1054,8 +1033,6 @@ exposures:
   - Create reusable logic with macros
   - Write custom tests
   - Document and expose your work
-
-Time for lunch! When we return, we'll explore dbt Cloud...
 
 ---
 
