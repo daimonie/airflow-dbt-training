@@ -35,11 +35,16 @@ jobs:
           prerelease: false
 
       - name: Upload PDF Assets
-        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./tmp/presentation/dist/day_three.pdf
-          asset_name: day_three.pdf
-          asset_content_type: application/pdf
+          UPLOAD_URL: ${{ steps.create_release.outputs.upload_url }}
+        run: |
+          for pdf in tmp/presentation/dist/*.pdf; do
+            filename=$(basename "$pdf")
+            echo "Uploading $filename..."
+            curl \
+              -H "Authorization: token $GITHUB_TOKEN" \
+              -H "Content-Type: application/pdf" \
+              --data-binary @"$pdf" \
+              "${UPLOAD_URL%\{*}?name=$filename"
+          done
