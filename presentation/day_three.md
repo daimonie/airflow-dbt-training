@@ -400,6 +400,7 @@ Now that we have robust value handling, let's ensure data quality.
 {% endtest %}
 ```
 
+
 ### Usage in schema.yml
 ```yaml
 models:
@@ -410,7 +411,7 @@ models:
           - valid_values:
               valid_values: ['URBAN', 'RURAL']
 ```
-Let's add it to the gold zone for `gold.region_type_composition.sql`
+To see the results, either find compiled query or use `dbt test --store-failures`
 --- 
 
 ## Advanced: Integration Tests
