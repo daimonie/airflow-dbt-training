@@ -572,16 +572,7 @@ Note: And as we previously mentioned, the compiled sql queries will be available
 
 ---
 
-##  Morning Session Progress:**
-- You've learned how to:
-  - Make models process incrementally
-  - Create reusable logic with macros
-  - Write custom tests
-  - Document and expose your work
-
----
-
-## Afternoon Session: dbt Cloud
+## dbt Cloud
 
 * dbt Cloud is a hosted service for dbt projects
 * Removes the need for local setup
