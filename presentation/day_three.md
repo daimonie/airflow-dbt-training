@@ -104,8 +104,7 @@ FROM avg_prices p
 LEFT JOIN {{ ref('region_type_composition') }} r
   ON p.region = r.region
 ```
-
-But what if we have millions of housing prices? daily updates to process? Limited processing time or budget?
+That works for the case outlined. But what if we have millions of housing prices? or daily updates to process? Or limited time and budget? 
 
 Enter: **Incremental Models**
 
@@ -122,9 +121,9 @@ Enter: **Incremental Models**
 While dbt incremental models work across all warehouses, modern data warehouses like Snowflake (Dynamic Tables) and BigQuery (Materialized Views) offer native incremental processing. These built-in features automatically handle updates without requiring dbt runs, often with better performance. However, dbt incrementals give you more direct control over the transformation logic and timing.
 
 **Key Points - Incremental Models:**
-- You can now make models process only new/changed data
-- You understand the trade-offs vs native features
-- You can add incremental logic to existing models
+- Incremental models to only process new/changed data
+- There are trade-offs between incremental models & native features
+- You can add incremental logic to any existing model
 
 ---
 
@@ -313,11 +312,6 @@ nano macros/normalize_values.sql
 {%- endmacro -%}
 ```
 
-**Summary - Basic Macros:**
-- You can create reusable SQL snippets
-- You understand Jinja templating basics
-- You can parameterize your macros
-
 ---
 
 ## Using normalize_values
@@ -471,7 +465,7 @@ Common patterns to consider:
 
 ## Extension Ideas
 
-Ways to build on these patterns:
+Here are some ways to build on these patterns:
 
 ### Macro Enhancements
 - Add custom column name suffixes/prefixes
@@ -613,23 +607,10 @@ We'll walk through each feature and show you how to explore it in your own Cloud
 * Use GitHub login if possible (helps with version control)
 * Once inside, follow the onboarding to:
 
-  * Create a new project using the **Jaffle Shop** demo project
-  * Select **BigQuery** as the warehouse (or ask for help setting this up)
-  * Link it to a GitHub repo (optional if you're just exploring)
-
-We'll use this project to explore dbt Cloud features together.
-
-
----
-
-## Set Up dbt Cloud (Last Hour)
-
-If you didn't set up a project during sign-up:
-
 1. Create a new project in dbt Cloud
 2. Use the **Jaffle Shop** sample repo
 
-   * GitHub: [https://github.com/dbt-labs/jaffle\_shop](https://github.com/dbt-labs/jaffle_shop)
+   * GitHub: [https://github.com/dbt-labs/jaffle\_shop](https://github.com/dbt-labs/jaffle-shop)
 3. Connect to BigQuery (we'll help if needed)
 4. Run your first job to test the setup
 
