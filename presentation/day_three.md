@@ -386,6 +386,22 @@ Let's use it in our `gold.region_type_composition` model!
 
 ---
 
+## Documenting macros and setting variables
+You can set variables for your model at the top:
+```
+{% set option_1='RURAL'}
+{% set option_2='URBAN'}
+```
+Use them normally in your model: ` {{ option_1 }}
+
+Document your macros by using a schema in the `dbt/macros` folder:
+```
+version 2:
+macros:
+  - name: normalize_values
+    description: Normalizes values to the given values
+---
+
 ## Using Macros in Tests
 
 Now that we have robust value handling, let's ensure data quality.

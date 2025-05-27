@@ -4,4 +4,4 @@
     WHERE
         {{ normalize_values(column_name, valid_values) }} = 'UNKNOWN'
         OR {{ column_name }} = 'UNKNOWN'
-{% endtest %} 
+{% endtest %}
