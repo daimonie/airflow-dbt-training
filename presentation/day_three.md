@@ -608,11 +608,11 @@ We'll walk through each feature and show you how to explore it in your own Cloud
 * Once inside, follow the onboarding to:
 
 1. Create a new project in dbt Cloud
-2. Use the **Jaffle Shop** sample repo
-
+2. Connect to BigQuery (we'll help - we need to get some credentials!)
+3. Use the **Jaffle Shop** sample repo.
    * GitHub: [https://github.com/dbt-labs/jaffle\_shop](https://github.com/dbt-labs/jaffle-shop)
-3. Connect to BigQuery (we'll help if needed)
-4. Run your first job to test the setup
+   * This page has the instructions
+4. We'll have to run `dbt deps` and `dbt compile` to start our project.
 
 ---
 
