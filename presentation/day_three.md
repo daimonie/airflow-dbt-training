@@ -570,43 +570,6 @@ target/catalog.json
 
 Note: And as we previously mentioned, the compiled sql queries will be available in dbt docs and in the compiled/ folder
 
----
-
-## dbt Cloud
-
-* dbt Cloud is a hosted service for dbt projects
-* Removes the need for local setup
-* Lets you manage and monitor data workflows at scale
-
-We'll walk through each feature and show you how to explore it in your own Cloud workspace.
-
-* Hosted version of dbt with:
-
-  * Web IDE
-  * Scheduled runs
-  * Hosted docs
-  * Full lineage graph
-
-* Works with GitHub, BigQuery, Snowflake, and more
-
----
-
-## Create Your Own dbt Cloud Account
-
-* Everyone creates their **own free account** (1 developer seat included)
-* Visit: [https://cloud.getdbt.com/signup/](https://cloud.getdbt.com/signup/)
-* Use GitHub login if possible (helps with version control)
-* Once inside, follow the onboarding to:
-
-1. Create a new project in dbt Cloud
-2. Connect to BigQuery (we'll help - we need to get some credentials!)
-3. Use the **Jaffle Shop** sample repo.
-   * GitHub: [https://github.com/dbt-labs/jaffle\_shop](https://github.com/dbt-labs/jaffle-shop)
-   * This page has the instructions
-4. We'll have to run `dbt deps` and `dbt compile` to start our project.
-
----
-
 ## Cloud Feature: Cloud IDE
 
 * Navigate to: **Develop** tab in dbt Cloud  
@@ -799,3 +762,196 @@ What you've learned today:
 * How to define and document exposures
 * What dbt Cloud adds to the workflow
  
+
+---
+
+## dbt Cloud
+
+* dbt Cloud is a hosted service for dbt projects
+* Removes the need for local setup
+* Lets you manage and monitor data workflows at scale
+
+We'll walk through each feature and show you how to explore it in your own Cloud workspace.
+
+* Hosted version of dbt with:
+
+  * Web IDE
+  * Scheduled runs
+  * Hosted docs
+  * Full lineage graph
+
+* Works with GitHub, BigQuery, Snowflake, and more
+
+---
+
+## Create Your Own dbt Cloud Account
+
+* Everyone creates their **own free account** (1 developer seat included)
+* Visit: [https://cloud.getdbt.com/signup/](https://cloud.getdbt.com/signup/)
+* Use GitHub login if possible (helps with version control)
+* Once inside, follow the onboarding to:
+
+1. Create a new project in dbt Cloud
+2. Connect to BigQuery (we'll help - we need to get some credentials!)
+3. Use the **Jaffle Shop** sample repo.
+   * GitHub: [https://github.com/dbt-labs/jaffle\_shop](https://github.com/dbt-labs/jaffle-shop)
+   * This page has the instructions
+4. We'll have to run `dbt deps` and `dbt compile` to start our project.
+
+---
+---
+marp: true
+theme: default
+class: lead
+paginate: true
+---
+
+# Interacting with dbt Cloud
+
+---
+
+## Getting Started
+
+- Recap from the morning
+- Set goals for this session
+- Confirm everyone is logged into dbt Cloud
+- Navigate to the Jaffle Shop project
+
+---
+
+## Version Control with Git
+
+- dbt Cloud uses Git for model versioning
+- Changes are made via branches and commits
+- Merge models into `main` to deploy
+- Review commit history via the IDE
+- Git configuration set during project init
+
+---
+
+## Exploring the Jaffle Shop Project
+
+- Open the project in dbt Cloud IDE
+- Review project structure and folders
+- Locate and read the README file
+- Understand the model DAG and dependencies
+
+---
+
+## Running the First Command
+
+- Use a command from the README (e.g. `dbt debug`)
+- Validate setup and connection
+- Observe output in the Cloud IDE terminal
+- Troubleshoot if needed
+
+---
+
+## Running `dbt run` and Viewing Results
+
+- Run `dbt run` to build models
+- Watch logs and compilation steps
+- Inspect run artifacts in the IDE
+- Check the database for built tables
+
+---
+
+## Using the Cloud IDE
+
+- Navigate the file tree
+- Edit and save a model file
+- Explore autocomplete and context tooltips
+- Commit changes with a message
+
+---
+
+## Generating Documentation
+
+- Run `dbt docs generate` in the IDE
+- Click “View Docs” to open the lineage graph
+- Explore model metadata and table relations
+- Use the search and explore tools
+
+---
+
+## Using the Explorer
+
+- Switch to the "Explore" tab in dbt Cloud
+- Click through the DAG to navigate models
+- Inspect model status, compiled SQL, and dependencies
+- Useful for understanding model relationships visually
+
+---
+
+## Creating and Managing Jobs
+
+- Navigate to the "Deploy" > "Jobs" tab
+- Create a new job: choose a branch and commands (e.g. `dbt build`)
+- Schedule runs (e.g. daily at 8am)
+- Configure notifications and CI/CD triggers
+- Monitor job history and logs
+
+---
+
+## Deployment and Environments
+
+- dbt Cloud separates dev and prod environments
+- Use the “Environments” tab to manage credentials and settings
+- Link jobs to specific environments
+- Ensures safe deployment and testing
+
+---
+
+## Notifications and Alerts
+
+- dbt Cloud supports email and Slack notifications
+- Useful for job failures and successes
+- Configure alerts per job in the UI
+- Helps teams stay on top of production runs
+
+---
+
+## Continuous Integration
+
+- dbt Cloud supports PR-based CI workflows
+- Automatically builds in temp schemas when commits are pushed
+- Useful for testing changes before merging to main
+- Ensures model changes won’t break deployments
+
+---
+
+## Snapshots Overview
+
+- Snapshots record historical changes to rows
+- Defined using unique keys and strategies
+- Useful for SCD Type 2 tracking
+- Run using `dbt snapshot`
+- Review changes in the snapshot table
+
+---
+
+## Advanced Commands
+
+- `dbt build --select result:error+` to rerun failed models
+- `dbt run --select state:modified` to run only changed models
+- Combine `--selector` with tags or models
+- Use these to speed up workflows
+
+---
+
+## Schema Naming with Jinja
+
+- Use dynamic schema naming with:
+  `+schema: "{{ env_var('DBT_CUSTOM_SCHEMA', target.user | lower) }}"`
+- Uses env var if present, else fallback to profile user
+- Set `user:` in `profiles.yml` to your name (e.g. `josko`)
+- Ensures isolated dev schemas without hardcoding
+
+---
+
+## Wrap-Up & Questions
+
+- Recap dbt Cloud capabilities
+- Git, IDE, docs, jobs, snapshots, CI, alerts
+- Review what was built and why
+- Invite questions and encourage further exploration
