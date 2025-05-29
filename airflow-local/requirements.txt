@@ -1,4 +1,5 @@
 pandas
 scikit-learn
-
+cbsodata
 dbt-core
+psycopg2-binary>=2.9.9  # PostgreSQL driver for SQLAlchemy

@@ -4,7 +4,7 @@ from airflow.utils.dates import days_ago
 from datetime import timedelta
 
 with DAG(
-    dag_id="simple_bash_graph",
+    dag_id="simple_bash_graph_duplicate",
     description="Demo DAG showing task dependencies with BashOperator",
     schedule_interval=None,  # Manual trigger only
     start_date=days_ago(1),
