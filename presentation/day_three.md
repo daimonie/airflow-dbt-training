@@ -104,8 +104,7 @@ FROM avg_prices p
 LEFT JOIN {{ ref('region_type_composition') }} r
   ON p.region = r.region
 ```
-
-But what if we have millions of housing prices? daily updates to process? Limited processing time or budget?
+That works for the case outlined. But what if we have millions of housing prices? or daily updates to process? Or limited time and budget? 
 
 Enter: **Incremental Models**
 
@@ -122,9 +121,9 @@ Enter: **Incremental Models**
 While dbt incremental models work across all warehouses, modern data warehouses like Snowflake (Dynamic Tables) and BigQuery (Materialized Views) offer native incremental processing. These built-in features automatically handle updates without requiring dbt runs, often with better performance. However, dbt incrementals give you more direct control over the transformation logic and timing.
 
 **Key Points - Incremental Models:**
-- You can now make models process only new/changed data
-- You understand the trade-offs vs native features
-- You can add incremental logic to existing models
+- Incremental models to only process new/changed data
+- There are trade-offs between incremental models & native features
+- You can add incremental logic to any existing model
 
 ---
 
@@ -156,8 +155,6 @@ Consider creating a macro when you see:
    * Status mappings that could evolve
    * Categorization rules that may need updating
    * Thresholds that might be adjusted
-
-```
 
 ---
 
@@ -313,11 +310,6 @@ nano macros/normalize_values.sql
 {%- endmacro -%}
 ```
 
-**Summary - Basic Macros:**
-- You can create reusable SQL snippets
-- You understand Jinja templating basics
-- You can parameterize your macros
-
 ---
 
 ## Using normalize_values
@@ -394,6 +386,22 @@ Let's use it in our `gold.region_type_composition` model!
 
 ---
 
+## Documenting macros and setting variables
+You can set variables for your model at the top:
+```
+{% set option_1='RURAL'}
+{% set option_2='URBAN'}
+```
+Use them normally in your model: ` {{ option_1 }}
+
+Document your macros by using a schema in the `dbt/macros` folder:
+```
+version 2:
+macros:
+  - name: normalize_values
+    description: Normalizes values to the given values
+---
+
 ## Using Macros in Tests
 
 Now that we have robust value handling, let's ensure data quality.
@@ -408,6 +416,7 @@ Now that we have robust value handling, let's ensure data quality.
 {% endtest %}
 ```
 
+
 ### Usage in schema.yml
 ```yaml
 models:
@@ -418,7 +427,7 @@ models:
           - valid_values:
               valid_values: ['URBAN', 'RURAL']
 ```
-Let's add it to the gold zone for `gold.region_type_composition.sql`
+To see the results, either find compiled query or use `dbt test --store-failures`
 --- 
 
 ## Advanced: Integration Tests
@@ -471,7 +480,7 @@ Common patterns to consider:
 
 ## Extension Ideas
 
-Ways to build on these patterns:
+Here are some ways to build on these patterns:
 
 ### Macro Enhancements
 - Add custom column name suffixes/prefixes
@@ -576,27 +585,13 @@ target/catalog.json
 
 Note: And as we previously mentioned, the compiled sql queries will be available in dbt docs and in the compiled/ folder
 
----
-
-##  Morning Session Progress:**
-- You've learned how to:
-  - Make models process incrementally
-  - Create reusable logic with macros
-  - Write custom tests
-  - Document and expose your work
-
----
-
-## Afternoon Session: dbt Cloud
+## dbt Cloud
 
 * dbt Cloud is a hosted service for dbt projects
 * Removes the need for local setup
 * Lets you manage and monitor data workflows at scale
 
-We'll walk through each feature and show you how to explore it in your own Cloud workspace.
-
 * Hosted version of dbt with:
-
   * Web IDE
   * Scheduled runs
   * Hosted docs
@@ -606,224 +601,218 @@ We'll walk through each feature and show you how to explore it in your own Cloud
 
 ---
 
-## Create Your Own dbt Cloud Account
-
-* Everyone creates their **own free account** (1 developer seat included)
+## Create Your dbt Cloud Account
+* Create your **free account** (1 developer seat included)
 * Visit: [https://cloud.getdbt.com/signup/](https://cloud.getdbt.com/signup/)
-* Use GitHub login if possible (helps with version control)
-* Once inside, follow the onboarding to:
-
-  * Create a new project using the **Jaffle Shop** demo project
-  * Select **BigQuery** as the warehouse (or ask for help setting this up)
-  * Link it to a GitHub repo (optional if you're just exploring)
-
-We'll use this project to explore dbt Cloud features together.
-
+* Use GitHub login (recommended for easier setup)
+   * Or make a github login
 
 ---
 
-## Set Up dbt Cloud (Last Hour)
-
-If you didn't set up a project during sign-up:
-
-1. Create a new project in dbt Cloud
-2. Use the **Jaffle Shop** sample repo
-
-   * GitHub: [https://github.com/dbt-labs/jaffle\_shop](https://github.com/dbt-labs/jaffle_shop)
-3. Connect to BigQuery (we'll help if needed)
-4. Run your first job to test the setup
+## Project Setup
+1. Create new project in dbt Cloud
+2. Connect to BigQuery:
+   * You'll need service account credentials (provided via Pastebin)
+   * Add credentials in connection setup
+   * Test connection
+3. Clone Jaffle Shop repo:
+   * [github.com/dbt-labs/jaffle-shop](https://github.com/dbt-labs/jaffle-shop)
 
 ---
 
-## Cloud Feature: Cloud IDE
-
-* Navigate to: **Develop** tab in dbt Cloud  
-* Explore the in-browser IDE where you can:
-
-  - Edit models, macros, schema.yml, and tests  
-  - Preview SQL compilation and run results  
-  - Access model documentation via right panel
-
-**Try this**:  
-- Open a model and inspect the compiled SQL
-- Modify a model and run it directly from the UI
-- Check the logs and preview the table output
-
-*Why it matters*: You get reproducible development without needing a local setup — perfect for shared team environments.
-
----
-
-## Cloud Feature: Job Scheduling
-
-* Navigate to: **Deploy > Jobs**  
-* Jobs automate workflows like:
-
-  - `dbt run`, `dbt test`, `dbt build`
-  - Commands triggered on a schedule or manually
-  - Environment-specific configs (prod vs dev)
-
-**Try this**:  
-- Create a job that runs models daily at 08:00
-- Add `dbt test` as a follow-up command
-- Run manually and inspect job logs
-
-*Why it matters*: Scheduled jobs replace cron scripts and orchestrators for many teams — clean, visible, and easy to debug.
-
----
-## Cloud Feature: CI/CD Integration
-
-* Navigate to: **Settings > CI/CD**  
-* Integrate with GitHub, GitLab, or Azure DevOps  
-* dbt Cloud runs jobs on pull requests automatically
-
-### Typical Development Flow:
-
-1. **Create Feature Branch & Make Changes**
+## First Steps in dbt Cloud
+1. Open project in Cloud IDE
+2. Run initial commands:
    ```bash
-   git checkout -b feature/add-model
-   # Edit models, tests, docs
+   dbt deps
+   dbt debug
+   dbt compile
    ```
-
-2. **Open PR & Let CI Run**
-   * Push changes & create PR
-   * dbt Cloud detects PR and runs tests
-   * ✅ Success = Ready to merge
-   * ❌ Failure = Fix issues first
-*Why it matters*: Ensures code quality and data integrity through automated testing before changes reach production. This automated process helps maintain standardized and complete deployments.
+3. Verify successful setup in logs
 
 ---
 
-## dbt Cloud with On-Premise Data
+## Cloud IDE Overview
+* **File Navigation**: Browse project structure
+* **SQL Editor**: Write and edit models
+* **Command Bar**: Run dbt commands
+* **Git Integration**: Manage versions
+* **Preview**: See compiled SQL
 
-Need to connect dbt Cloud to on-premise databases? You have options:
-
-1. **Allowlisted IPs** (Simplest)
-   * Allow specific dbt Cloud IPs through your firewall
-   * See [docs.getdbt.com](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/ip-addresses)
-
-2. **SSH Tunnel** (Common)
-   * Use a bastion host for secure access
-   * Requires some infrastructure setup
-
-3. **Fully Isolated?**
-   * Use dbt Core + Airflow (like we learned!)
-   * Perfect for isolated environments
-   * Gives you full control over scheduling
-
-Remember: Always involve your security team when connecting cloud services to on-premise data.
+**Try this**:
+- Open a model and inspect the compiled SQL
+- Modify a model and run it directly
+- Check the logs and preview results
 
 ---
 
-## Cloud Feature: Notifications
-
-* Navigate to: **Settings > Notifications**  
-* Configure alerts for:
-
-  - Failed or successful jobs
-  - Job cancellations or delays
-
-**Try this**:  
-- Add a Slack webhook or email address
-- Trigger a job failure (e.g. by testing an invalid ref)
-- Confirm alert delivery
-
-*Why it matters*: Keeps teams informed without manual checking — helps build trust and reliability in the data pipeline.
+## Working with Models
+* Open existing models
+* Create new models
+* Run specific models:
+  ```bash
+  dbt run --select model_name
+  dbt test --select model_name
+  ```
+* View results in the UI
 
 ---
 
-## Cloud Feature: Hosted Docs
+## Documentation & Lineage
+* Generate docs: `dbt docs generate`
+* View in **Docs** tab:
+  - DAG visualization
+  - Model details
+  - Column descriptions
+  - Dependencies
 
-* Navigate to: **Docs > Generate Docs**  
-* Hosted version of `dbt docs serve`, always available
-
-**Try this**:  
-- Generate docs and open the lineage graph
-- Click through a model and inspect its description, columns, and tests
-- Search for an exposure and see dependencies
-
-*Why it matters*: Centralizes documentation and makes model structure transparent across teams — no local server needed.
-
----
-
-## Cloud Feature: Version Control
-
-* Navigate to: **Develop > Git**  
-* Link your project to a Git provider  
-* Edit, commit, and push directly from the IDE
-
-**Try this**:  
-- Create a new branch and make a model edit
-- Commit the change and push to GitHub
-- Open a PR and let CI kick in
-
-*Why it matters*: Treats data code like software — versioned, reviewed, and controlled. Aligns with modern SDLC practices.
+**Try this**:
+- Generate docs and explore the lineage graph
+- Click through model relationships
+- Search for specific models or columns
 
 ---
 
-## Cloud Feature: Exposures
+## Explorer (DAG View)
+* Interactive model exploration
+* Visual dependency mapping
+* Click through capabilities:
+  - See upstream/downstream models
+  - Preview SQL code
+  - Check test status
+  - View documentation
 
-* Navigate to: **Docs > Explore > Exposures**  
-* Define dashboards, notebooks, or reports that use dbt models
-
-**Try this**:  
-- Add a new exposure in `schema.yml`
-- Use `depends_on` to link a gold model
-- Refresh docs and view it in the UI
-
-*Why it matters*: Tracks downstream usage and ownership — makes your data lineage go all the way to dashboards and reports.
-
----
-
-## Cloud Feature: dbt Explorer (DAG View)
-
-* Navigate to: **Docs > Explore > DAG tab**  
-* See a visual graph of all dbt models and dependencies
-
-**Try this**:  
-- Click a staging model and see what it feeds into
-- Explore top-down from a mart to understand its lineage
-- Hover to preview SQL or click into model details
-
-*Why it matters*: Helps explain your pipeline to non-engineers and supports debugging and dependency impact analysis.
+**Try this**:
+- Start from a mart model and trace its sources
+- Identify critical path dependencies
+- Use the search and filter options
 
 ---
 
-## Cloud Feature: Semantic Layer (Enterprise Only)
-
-* Available only on paid tiers  
-* Lets you define centralized metrics using `metrics:` blocks
-
-**Key concepts**:
-- Reusable definitions like `total_revenue` or `conversion_rate`
-- Queryable from BI tools via dbt's API
-
-*Why it matters*: Aligns business logic across dashboards, tools, and teams — no more conflicting definitions of "active users."
+## Development Workflow
+1. Create feature branch
+2. Make changes in IDE
+3. Test locally: `dbt test`
+4. Commit and push
+5. Create PR
+6. Automated CI runs
+7. Review & merge
 
 ---
 
-## Cloud Feature: API Access
+## Job Scheduling
+* Create jobs in **Deploy > Jobs**
+* Common job types:
+  - Daily full refresh
+  - Incremental updates
+  - Test runs
+* Set schedule and notifications
 
-* dbt Cloud offers APIs for automation and integration
-
-**Explore the docs**:  
-[https://docs.getdbt.com/docs/dbt-cloud/api-v2](https://docs.getdbt.com/docs/dbt-cloud/api-v2)
-
-**Common use cases**:
-- Trigger jobs from external systems (e.g. Airflow, Slackbot)
-- Pull metadata for lineage visualization
-- Retrieve run logs or test results programmatically
-
-*Why it matters*: Opens up dbt Cloud to custom orchestration and monitoring tools — great for advanced users and platform teams.
+**Try this**:
+- Create a daily refresh job
+- Add test commands
+- Configure notifications
 
 ---
 
-## Wrap-Up 
+## Environments
+* Development
+  - Personal schema
+  - Rapid iteration
+  - Direct feedback
+* Production
+  - Scheduled jobs
+  - Stable schemas
+  - Monitored execution
 
-What you've learned today:
+---
 
-* How to make models faster with incrementals
-* How to reuse logic using macros
-* How to write your own custom tests
-* How to define and document exposures
-* What dbt Cloud adds to the workflow
- 
+## Connecting to On-Premise Data
+Three main options for connecting dbt Cloud to internal databases:
+
+1. **Allowlisted IPs**
+   * Whitelist dbt Cloud IP ranges
+   * Simplest approach
+   * Requires firewall access
+
+2. **SSH Tunnel**
+   * Secure connection via bastion
+   * More setup required
+   * Better security
+
+---
+
+## On-Premise Setup Options
+3. **Hybrid Setup**
+   * Use dbt Core locally
+   * Connect via internal network
+   * Full control over connectivity
+
+Remember: Always involve security team when connecting cloud services to internal data.
+
+---
+
+## CI/CD Integration
+* Automated testing on pull requests
+* Branch-specific deployments
+* Status checks in GitHub/GitLab
+
+**Development Flow**:
+1. Branch → Change → Push
+2. PR triggers dbt Cloud runs
+3. Tests must pass to merge
+
+---
+
+## Schema Management
+* Use Jinja for dynamic schemas:
+  ```sql
+  {{ config(schema=env_var('DBT_SCHEMA', target.schema + '_mart')) }}
+  ```
+* Development schemas per user
+* Production schemas stay stable
+
+---
+
+## Enterprise Features
+* Semantic Layer
+  - Define metrics once
+  - Use across all BI tools
+* SSO Integration
+* Advanced permissions
+* Custom deployments
+
+---
+
+## Monitoring & Alerts
+* Job status notifications
+* Failure alerts
+* Success confirmations
+* Integration options:
+  - Email
+  - Slack
+  - Custom webhooks
+
+---
+
+## API Integration
+* REST API for automation
+* Common use cases:
+  - Trigger jobs programmatically
+  - Fetch run status
+  - Get model metadata
+  - Integrate with other tools
+
+**Try this**:
+- Review API documentation
+- Test an API endpoint
+- Plan potential integrations
+
+---
+
+## Tips for Success
+* Use meaningful branch names
+* Regular small commits
+* Test before pushing
+* Monitor job durations
+* Keep documentation updated

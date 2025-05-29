@@ -1,3 +1,4 @@
+-- depends_on: {{ ref('stg_housing_prices') }}
 WITH avg_prices AS (
   SELECT
     region,

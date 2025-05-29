@@ -1,3 +1,4 @@
+-- depends_on: {{ ref('stg_location_data') }}
 WITH type_counts AS (
   SELECT
     region,

@@ -6,7 +6,7 @@ sources:
     schema: public
     tables:
       - name: raw_housing_prices
-        description: Raw housing price data
+        description: Raw housing price data, imported via sql on database creation
         columns:
           - name: id
             description: Unique identifier for each record
