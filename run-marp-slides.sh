@@ -7,18 +7,20 @@ for file in presentation/*.md; do
   echo "Building $file -> $name.[pdf|pptx]"
 
   docker run --rm --init \
-    -v "$PWD:/home/marp/app/" \
+    -v "$PWD/presentation:/home/marp/app/" \
+    -v "$PWD/tmp/presentation/dist:/home/marp/output/" \
     -e LANG=$LANG \
     marpteam/marp-cli \
-    "$file" \
+    "$(basename "$file")" \
     --pdf --allow-local-files \
-    --output "tmp/presentation/dist/$name.pdf"
+    --output "/home/marp/output/$name.pdf"
 
   docker run --rm --init \
-    -v "$PWD:/home/marp/app/" \
+    -v "$PWD/presentation:/home/marp/app/" \
+    -v "$PWD/tmp/presentation/dist:/home/marp/output/" \
     -e LANG=$LANG \
     marpteam/marp-cli \
-    "$file" \
+    "$(basename "$file")" \
     --pptx --allow-local-files \
-    --output "tmp/presentation/dist/$name.pptx"
+    --output "/home/marp/output/$name.pptx"
 done

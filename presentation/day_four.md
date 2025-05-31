@@ -373,7 +373,7 @@ Next steps? Add documentation, tests, exposures — and make it shine.
 
 # Unlimited Assets
 
-![Unlimited Assets](./unlimited_assets.jpeg)
+![Unlimited Assets](unlimited_assets.jpeg)
 
 ---
 
@@ -392,5 +392,3 @@ This gives you:
 - Still have DAG-to-DAG dependencies
 
 Think of Assets as checkpoints, not individual files!
-
----
