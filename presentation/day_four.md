@@ -74,9 +74,11 @@ Tasks are the re-useable units in an airflow workflow. We familiarised ourselves
 - The **@task.branch decorator**: A way of inserting what/if logic into your task, deciding which branch of the DAG will be executed
 
 I've made a few new Operators you can use today.
+
 ---
 
 # XCom
+
 Cross-commmunication: How do tasks talk to each other?
 
 This can be done more manually, but we will use the pythonic way:

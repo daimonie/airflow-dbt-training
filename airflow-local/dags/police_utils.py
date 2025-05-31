@@ -463,6 +463,9 @@ class ProcessPoliceTable(BaseOperator):
         with open(filename, 'w') as f:
             json.dump(data, f)
             
+        data = json.load(f)
+        print(pd.DataFrame(data).head())
+        
         return filename
 
     def execute(self, context: Dict[str, Any]) -> Dict[str, Any]:
@@ -562,6 +565,7 @@ class UploadToDWHOperator(BaseOperator):
 
     def _upload_df_to_db(self, df: pd.DataFrame, table_name: str, engine) -> int:
         """Upload DataFrame to database table"""
+        print(df.head())
         df.to_sql(
             name=table_name,
             con=engine,
@@ -572,6 +576,7 @@ class UploadToDWHOperator(BaseOperator):
 
     def _process_single_file(self, file_path: str, engine) -> Dict[str, Any]:
         """Process a single file and upload to database"""
+        print(f"Processing file: {file_path}")
         self.log.info(f"Processing file: {file_path}")
         
         df = self._load_json_to_df(file_path)
