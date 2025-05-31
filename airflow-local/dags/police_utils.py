@@ -17,6 +17,7 @@ from sqlalchemy import create_engine
 from airflow.hooks.base import BaseHook
 from airflow.models.baseoperator import BaseOperator
 from airflow.datasets import Dataset
+from airflow.operators.bash import BashOperator
 
 # Create a module-specific logger
 logger = logging.getLogger(__name__)
@@ -203,167 +204,6 @@ class DocumentationOperator(BaseOperator):
         logger.info(f"Documentation for {self.object_name}:\n{doc}")
         return doc
 
-class DbtRunOperator(BaseOperator):
-    """
-    Operator that executes 'dbt run' command.
-    
-    Example usage:
-    ```python
-    dbt_run = DbtRunOperator(
-        task_id='dbt_run',
-        select='my_model+'  # Optional: run specific model(s)
-    )
-    ```
-    """
-    template_fields = ('select',)
-    
-    def __init__(
-        self,
-        select: Optional[str] = None,
-        **kwargs
-    ) -> None:
-        """Initialize the operator."""
-        super().__init__(**kwargs)
-        self.select = select
-
-    def execute(self, context: Dict[str, Any]) -> None:
-        """Execute dbt run command."""
-        cmd = ['dbt', 'run']
-        if self.select:
-            cmd.extend(['--select', self.select])
-        logger.info(f"Executing: {' '.join(cmd)}")
-        result = subprocess.run(cmd, check=True, capture_output=True, text=True)
-        logger.info(result.stdout)
-        if result.stderr:
-            logger.warning(result.stderr)
-
-class DbtTestOperator(BaseOperator):
-    """
-    Operator that executes 'dbt test' command.
-    
-    Example usage:
-    ```python
-    dbt_test = DbtTestOperator(
-        task_id='dbt_test',
-        select='my_model+'  # Optional: test specific model(s)
-    )
-    ```
-    """
-    template_fields = ('select',)
-    
-    def __init__(
-        self,
-        select: Optional[str] = None,
-        **kwargs
-    ) -> None:
-        """Initialize the operator."""
-        super().__init__(**kwargs)
-        self.select = select
-
-    def execute(self, context: Dict[str, Any]) -> None:
-        """Execute dbt test command."""
-        cmd = ['dbt', 'test']
-        if self.select:
-            cmd.extend(['--select', self.select])
-        logger.info(f"Executing: {' '.join(cmd)}")
-        result = subprocess.run(cmd, check=True, capture_output=True, text=True)
-        logger.info(result.stdout)
-        if result.stderr:
-            logger.warning(result.stderr)
-
-class DbtBuildOperator(BaseOperator):
-    """
-    Operator that executes 'dbt build' command.
-    
-    Example usage:
-    ```python
-    dbt_build = DbtBuildOperator(
-        task_id='dbt_build',
-        select='my_model+'  # Optional: build specific model(s)
-    )
-    ```
-    """
-    template_fields = ('select',)
-    
-    def __init__(
-        self,
-        select: Optional[str] = None,
-        **kwargs
-    ) -> None:
-        """Initialize the operator."""
-        super().__init__(**kwargs)
-        self.select = select
-
-    def execute(self, context: Dict[str, Any]) -> None:
-        """Execute dbt build command."""
-        cmd = ['dbt', 'build']
-        if self.select:
-            cmd.extend(['--select', self.select])
-        logger.info(f"Executing: {' '.join(cmd)}")
-        result = subprocess.run(cmd, check=True, capture_output=True, text=True)
-        logger.info(result.stdout)
-        if result.stderr:
-            logger.warning(result.stderr)
-
-class DbtSeedOperator(BaseOperator):
-    """
-    Operator that executes 'dbt seed' command.
-    
-    Example usage:
-    ```python
-    dbt_seed = DbtSeedOperator(
-        task_id='dbt_seed',
-        select='my_seed+'  # Optional: load specific seed(s)
-    )
-    ```
-    """
-    template_fields = ('select',)
-    
-    def __init__(
-        self,
-        select: Optional[str] = None,
-        **kwargs
-    ) -> None:
-        """Initialize the operator."""
-        super().__init__(**kwargs)
-        self.select = select
-
-    def execute(self, context: Dict[str, Any]) -> None:
-        """Execute dbt seed command."""
-        cmd = ['dbt', 'seed']
-        if self.select:
-            cmd.extend(['--select', self.select])
-        logger.info(f"Executing: {' '.join(cmd)}")
-        result = subprocess.run(cmd, check=True, capture_output=True, text=True)
-        logger.info(result.stdout)
-        if result.stderr:
-            logger.warning(result.stderr)
-
-class DbtDocsGenerateOperator(BaseOperator):
-    """
-    Operator that executes 'dbt docs generate' command.
-    
-    Example usage:
-    ```python
-    dbt_docs = DbtDocsGenerateOperator(
-        task_id='dbt_docs'
-    )
-    ```
-    """
-    
-    def __init__(self, **kwargs) -> None:
-        """Initialize the operator."""
-        super().__init__(**kwargs)
-
-    def execute(self, context: Dict[str, Any]) -> None:
-        """Execute dbt docs generate command."""
-        cmd = ['dbt', 'docs', 'generate']
-        logger.info(f"Executing: {' '.join(cmd)}")
-        result = subprocess.run(cmd, check=True, capture_output=True, text=True)
-        logger.info(result.stdout)
-        if result.stderr:
-            logger.warning(result.stderr)
-
 class ProcessPoliceTable(BaseOperator):
     """
     Operator that processes a single police-related table from CBS Open Data.
@@ -463,8 +303,10 @@ class ProcessPoliceTable(BaseOperator):
         with open(filename, 'w') as f:
             json.dump(data, f)
             
-        data = json.load(f)
-        print(pd.DataFrame(data).head())
+        df = pd.read_json(filename)
+        print(df.head())
+        for col in df.columns:
+            print(f"Column found: {col}, sample values: {df[col].head()}")
         
         return filename
 
