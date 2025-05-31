@@ -59,20 +59,21 @@ table td {
 # Airflow Recap
 
 Airflow is a scheduling tool where you write workflows in Python.  The basic concepts:
-- A *DAG* is a Direct Acrylic Graph - a directed flowchart without loops
-- A *Task* is, well, a task in your workflow.
-- An *Asset* is a way of telling Airflow that you want to write a file/dataset/table and want downstream DAGs to trigger off that update
+- A **DAG** is a Direct Acrylic Graph - a directed flowchart without loops
+- A **Task** is, well, a task in your workflow.
+- An **Asset** is a way of telling Airflow that you want to write a file/dataset/table and want downstream DAGs to trigger off that update
 
 ---
 
 # Tasks
 
 Tasks are the re-useable units in an airflow workflow. We familiarised ourselves with some:
-- BashOperator: A simple task to run a Bash command (linux command)
-- PythonOperator: A task to run a python function
-- The @task decorator: A shorter way of turning your python function into a task
-- The @task.branch decorator: A way of inserting what/if logic into your task, deciding which branch of the DAG will be executed
+- **BashOperator**: A simple task to run a Bash command (linux command)
+- **PythonOperator**: A task to run a python function
+- The **@task** decorator: A shorter way of turning your python function into a task
+- The **@task.branch decorator**: A way of inserting what/if logic into your task, deciding which branch of the DAG will be executed
 
+I've made a few new Operators you can use today.
 ---
 
 # XCom
@@ -81,11 +82,10 @@ Cross-commmunication: How do tasks talk to each other?
 This can be done more manually, but we will use the pythonic way:
 ```
 task_with_output = SomeTaskOperator(task_id="task_with_output")
-
 task_with_input = SomeOtherTaskOperator(task_id="task_with_input", input=task_with_output)
 
 task_with_output >> task_with_input
----
+```
 Or, if using decorators:
 ```
 task_with_output = some_task()
@@ -96,7 +96,12 @@ task_with_output >> task_with_input(task_with_output)
 
 # Police Data Explorer
 
-We've created custom Airflow operators to help you explore police-related data:
+I've created some custom Airflow operators to help you explore police-related data.
+
+The first will search in the open dataset (CBS+Police) for tables that mention the `search_term`.
+You can also do this on the police website at `https://data.politie.nl/#/Politie/nl/`.
+
+The List operator: Run it, and check the logs to find out what you found!
 
 ```python
 # List all police-related tables
