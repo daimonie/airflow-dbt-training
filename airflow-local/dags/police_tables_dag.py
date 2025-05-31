@@ -120,18 +120,20 @@ with DAG(
 
     @task(
         task_id="list_final_assets",
+        outlets=[Dataset("file:///opt/airflow/data/*.json")]  # Represent the files we create
     )
     def list_final_assets(): 
-        all_assets = []
+        data_dir = "/opt/airflow/data"
+        all_files = []
         if os.path.exists(data_dir):
             for filename in os.listdir(data_dir):
                 if filename.endswith('.json'):
-                    print(f"Found asset: data/{filename}")
-                    all_assets.append(f"data/{filename}")
+                    print(f"Found file: {os.path.join(data_dir, filename)}")
+                    all_files.append(os.path.join(data_dir, filename))
         else:
-            print("No assets found")
+            print("No files found in /opt/airflow/data")
 
-        return all_assets
+        return all_files
 
     final_assets = list_final_assets()
     process_all_tables >> final_assets
@@ -140,7 +142,9 @@ with DAG(
     upload_to_dwh = UploadToDWHOperator(
         task_id='upload_to_dwh',
         connection_id='dwh',  # You'll need to configure this connection in Airflow
-        xcom_task_id='list_final_assets'  # Get file paths from the list_final_assets task
+        xcom_task_id='list_final_assets',  # Get file paths from the list_final_assets task
+        inlets=[Dataset("file:///opt/airflow/data/*.json")],  # Input from the file Asset
+        outlets=[Dataset("postgres://dwh:5432/dwh/public/*")]  # Output to postgres
     )
 
     final_assets >> upload_to_dwh

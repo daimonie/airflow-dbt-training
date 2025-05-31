@@ -341,10 +341,11 @@ Today you learned to:
 
 Next steps? Add documentation, tests, exposures — and make it shine.
 
+---
 
 # Unlimited Assets
 
-![Unlimited Assets](unlimited_assets.jpeg)
+![Unlimited Assets](presentation/unlimited_assets.jpeg)
 
 ---
 
