@@ -6,6 +6,7 @@ import sys
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Sequence
+import fnmatch
 
 # Third-party imports
 import cbsodata
@@ -381,29 +382,86 @@ class UploadToDWHOperator(BaseOperator):
         return create_engine(uri)
 
     def _get_files_to_process(self, context) -> List[str]:
-        """Determine which files to process from direct path or XCom"""
-        if self.file_path:
-            return [self.file_path]
-        
+        """Determine which files to process from direct path or XCom.
+        Priority:
+        1. XCom values from specified task
+        2. Direct file path
+        3. Asset/Dataset paths (as fallback)
+        """
+        # First priority: XCom values
         if self.xcom_task_id:
             xcom_value = context['task_instance'].xcom_pull(
                 task_ids=self.xcom_task_id,
                 key=self.xcom_key
             )
-            if isinstance(xcom_value, list):
-                return xcom_value
-            return [xcom_value]
+            if xcom_value is not None:
+                if isinstance(xcom_value, list):
+                    return xcom_value
+                return [xcom_value]
+        
+        # Second priority: Direct file path
+        if self.file_path:
+            return [self.file_path]
             
-        raise ValueError("No files specified for upload")
+        # Last resort: Check inlets for file paths
+        if hasattr(self, 'inlets') and self.inlets:
+            return [inlet.uri for inlet in self.inlets if isinstance(inlet, Dataset)]
+            
+        raise ValueError("No files specified for upload - need either xcom_task_id, file_path, or valid inlets")
 
-    def _load_json_to_df(self, file_path: str | Dataset) -> pd.DataFrame:
-        """Load JSON file into pandas DataFrame"""
-        # Handle Dataset objects by extracting their uri
+    def _normalize_file_path(self, file_path: str | Dataset) -> str:
+        """Convert Dataset or file:// URI to a standard file path."""
         if isinstance(file_path, Dataset):
             file_path = file_path.uri
-        
+            
+        if file_path.startswith('file://'):
+            file_path = file_path[7:]  # Strip file:// prefix
+            
+        return file_path
+
+    def _find_matching_files(self, base_dir: str, pattern: str) -> list[str]:
+        """Find all files in base_dir matching the given pattern."""
+        if not os.path.exists(base_dir):
+            self.log.warning(f"Directory {base_dir} does not exist")
+            return []
+            
+        matching_files = []
+        for filename in os.listdir(base_dir):
+            if fnmatch.fnmatch(filename, pattern):
+                full_path = os.path.join(base_dir, filename)
+                self.log.info(f"Found matching file: {full_path}")
+                matching_files.append(full_path)
+                
+        if not matching_files:
+            self.log.warning(f"No files found matching pattern {pattern}")
+            
+        return matching_files
+
+    def _load_json_file(self, file_path: str) -> list:
+        """Load JSON data from a single file."""
+        self.log.info(f"Loading data from {file_path}")
         with open(file_path, 'r') as f:
             data = json.load(f)
+            return data if isinstance(data, list) else [data]
+
+    def _load_json_to_df(self, file_path: str | Dataset) -> pd.DataFrame:
+        """Load JSON file(s) into pandas DataFrame. Handles both direct paths and wildcard patterns."""
+        file_path = self._normalize_file_path(file_path)
+            
+        # If path contains wildcard, find all matching files
+        if '*' in file_path:
+            base_dir = os.path.dirname(file_path)
+            pattern = os.path.basename(file_path)
+            
+            matching_files = self._find_matching_files(base_dir, pattern)
+            all_data = []
+            for file_path in matching_files:
+                all_data.extend(self._load_json_file(file_path))
+                
+            return pd.DataFrame(all_data) if all_data else pd.DataFrame()
+        
+        # Regular file handling
+        data = self._load_json_file(file_path)
         return pd.DataFrame(data)
 
     def _get_table_name(self, file_path: str | Dataset) -> str:

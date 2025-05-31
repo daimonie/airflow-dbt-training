@@ -120,7 +120,7 @@ with DAG(
 
     @task(
         task_id="list_final_assets",
-        outlets=[Dataset("file:///opt/airflow/data/*.json")]  # Represent the files we create
+        outlets=[Dataset("police_tables_processing.json_files")]  # Simple string identifier
     )
     def list_final_assets(): 
         data_dir = "/opt/airflow/data"
@@ -143,8 +143,8 @@ with DAG(
         task_id='upload_to_dwh',
         connection_id='dwh',  # You'll need to configure this connection in Airflow
         xcom_task_id='list_final_assets',  # Get file paths from the list_final_assets task
-        inlets=[Dataset("file:///opt/airflow/data/*.json")],  # Input from the file Asset
-        outlets=[Dataset("postgres://dwh:5432/dwh/public/*")]  # Output to postgres
+        inlets=[Dataset("police_tables_processing.json_files")],  # Simple string identifier for input
+        outlets=[Dataset("police_tables_processing.postgres_tables")]  # Simple string identifier for output
     )
 
     final_assets >> upload_to_dwh
