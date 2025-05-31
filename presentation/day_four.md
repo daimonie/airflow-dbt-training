@@ -49,10 +49,48 @@ table td {
 ---
 
 # Morning Agenda
-
+0. Recap
 1. Exploring Police Data Sources
 2. Loading Data into Our Warehouse
 3. Setting Up Automated Data Pipelines
+
+---
+
+# Airflow Recap
+
+Airflow is a scheduling tool where you write workflows in Python.  The basic concepts:
+- A *DAG* is a Direct Acrylic Graph - a directed flowchart without loops
+- A *Task* is, well, a task in your workflow.
+- An *Asset* is a way of telling Airflow that you want to write a file/dataset/table and want downstream DAGs to trigger off that update
+
+---
+
+# Tasks
+
+Tasks are the re-useable units in an airflow workflow. We familiarised ourselves with some:
+- BashOperator: A simple task to run a Bash command (linux command)
+- PythonOperator: A task to run a python function
+- The @task decorator: A shorter way of turning your python function into a task
+- The @task.branch decorator: A way of inserting what/if logic into your task, deciding which branch of the DAG will be executed
+
+---
+
+# XCom
+Cross-commmunication: How do tasks talk to each other?
+
+This can be done more manually, but we will use the pythonic way:
+```
+task_with_output = SomeTaskOperator(task_id="task_with_output")
+
+task_with_input = SomeOtherTaskOperator(task_id="task_with_input", input=task_with_output)
+
+task_with_output >> task_with_input
+---
+Or, if using decorators:
+```
+task_with_output = some_task()
+task_with_output >> task_with_input(task_with_output)
+```
 
 ---
 
