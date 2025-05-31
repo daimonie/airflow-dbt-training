@@ -8,14 +8,17 @@ from airflow.decorators import task
 from airflow.models.dataset import Dataset
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import ShortCircuitOperator
-from airflow.models import Variable
+from airflow.models import Variable 
 
 # Local imports
 from police_utils import (
     ListPoliceTables,
     ProcessPoliceTable,
     DocumentationOperator,
-    UploadToDWHOperator
+    UploadToDWHOperator,
+    ListDWHTables,
+    DescribeDWHTable,
+    get_postgres_asset_uri
 )
 from dbt_utils import (
     DbtGenerateProfilesOperator,
@@ -56,15 +59,6 @@ default_args = {
     'retry_delay': timedelta(minutes=5),
 }
 
-# Create dataset assets for each file in data/
-data_dir = "data"
-datasets = []
-
-if os.path.exists(data_dir):
-    for filename in os.listdir(data_dir):
-        if filename.endswith('.json'):
-            dataset = Dataset(os.path.join(data_dir, filename))
-            datasets.append(dataset)
 
 with DAG("refresh_airflow", tags=['day_four'],):
     reserialize = BashOperator(
@@ -105,14 +99,12 @@ with DAG(
     # List all police-related tables
     list_tables = ListPoliceTables(
         task_id='list_police_tables',
-        search_term='politie',
-        limit=10
+        search_term='politie'
     )
 
     # Example 1: Dynamic mapping - process all found tables 
     process_all_tables = ProcessPoliceTable.partial(
         task_id='process_all_tables',
-        outlets=datasets  # Use our pre-defined datasets
     ).expand(
         table_data=list_tables.output
     )
@@ -128,7 +120,6 @@ with DAG(
 
     @task(
         task_id="list_final_assets",
-        outlets=datasets  # Also mark this task as producing these datasets
     )
     def list_final_assets(): 
         all_assets = []
@@ -226,13 +217,32 @@ with DAG(
             task_id=f'upload_{task.task_id}_to_dwh',
             connection_id='dwh',
             file_path=file_path,
-            inlets=task.outlets  # Keep the dataset dependency
+            inlets=task.outlets,  # Keep the dataset dependency,
+            outlets=[Dataset(get_postgres_asset_uri(fp)) for fp in task.outlets]
         )
         upload_tasks.append(upload_task)
-        # The dependency is automatically handled through datasets (inlets/outlets)
 
         # So assets are DAG to DAG dependencies, not task to task dependencies
-        task >> upload_task
+        task >> upload_task 
+
+    # List all tables in the data warehouse
+    list_tables = ListDWHTables(
+        task_id='list_dwh_tables',
+        connection_id='dwh',
+        schema='public'
+    )
+
+    # Describe specific EP 1989 table
+    describe_ep_1989 = DescribeDWHTable(
+        task_id='describe_ep_1989',
+        connection_id='dwh',
+        table_name='europees_parlement_landelijk__1989_4280',
+        schema='public'
+    )
+
+    # Add dependencies
+    for upload_task in upload_tasks:
+        upload_task >> list_tables >> describe_ep_1989
 
 
 with DAG(
@@ -260,8 +270,15 @@ with DAG(
  
     # Run dbt models
     dbt_run = DbtRunOperator(
-        task_id='dbt_run',
-        select='*'  # Run all models
+        task_id='dbt_run'
     )
 
     dbt_debug >> dbt_run
+    
+    # Run dbt tests
+    dbt_test = DbtTestOperator(
+        task_id='dbt_test',
+        select='+tag:silver'
+    )
+
+    dbt_run >> dbt_test

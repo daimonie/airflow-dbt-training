@@ -1,7 +1,9 @@
 version: 2
 
-models:
+models: 
   - name: mart_housing_prices_breakdown
+    config:
+      tags: ['gold']
     description: Region-level summary of housing prices with urban/rural composition
     columns:
       - name: region
@@ -17,6 +19,8 @@ models:
         tests:
           - not_null 
   - name: region_type_composition
+    config:
+      tags: ['gold']
     description: Region-level breakdown of urban and rural location counts
     columns:
       - name: region
@@ -40,6 +44,8 @@ models:
         tests:
           - not_null
   - name: region_type_composition_with_macro
+    config:
+      tags: ['gold']
     description: Region-level breakdown of urban and rural location counts
     columns:
       - name: region

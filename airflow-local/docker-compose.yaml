@@ -1,5 +1,3 @@
-version: '3.7'
-
 services:
   postgres:
     image: postgres:15
@@ -60,7 +58,7 @@ services:
       - airflow-logs:/opt/airflow/logs
 
   airflow-scheduler:
-    image: apache/airflow:2.8.1-python3.10
+    build: .
     depends_on:
       - airflow-init
     command: airflow scheduler
@@ -71,6 +69,7 @@ services:
       - ./dags:/opt/airflow/dags
       - ./plugins:/opt/airflow/plugins
       - airflow-logs:/opt/airflow/logs
+      - /var/run/docker.sock:/var/run/docker.sock
 
   dbt:
     image: python:3.11-slim

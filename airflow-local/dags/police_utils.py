@@ -334,6 +334,15 @@ class ProcessPoliceTable(BaseOperator):
         logger.info(f"Processed {result['row_count']} rows from table {table_info['table_name']}")
         return result
 
+
+
+def get_postgres_asset_uri(file_path: str) -> str:
+    """Helper function to create a postgres Asset URI using the same table name logic as UploadToDWHOperator."""
+    if isinstance(file_path, Dataset):
+        file_path = file_path.uri
+        
+    return os.path.splitext(os.path.basename(file_path))[0].lower()
+
 class UploadToDWHOperator(BaseOperator):
     """
     Operator that uploads JSON files to a data warehouse using a configured connection.
@@ -400,10 +409,7 @@ class UploadToDWHOperator(BaseOperator):
     def _get_table_name(self, file_path: str | Dataset) -> str:
         """Generate table name from file path"""
         # Handle Dataset objects by extracting their uri
-        if isinstance(file_path, Dataset):
-            file_path = file_path.uri
-            
-        return os.path.splitext(os.path.basename(file_path))[0].lower()
+        return get_postgres_asset_uri(file_path)    
 
     def _upload_df_to_db(self, df: pd.DataFrame, table_name: str, engine) -> int:
         """Upload DataFrame to database table"""

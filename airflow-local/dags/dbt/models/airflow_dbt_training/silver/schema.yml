@@ -2,6 +2,8 @@ version: 2
 
 models:
   - name: stg_housing_prices
+    config:
+      tags: ['silver']
     description: Staged housing prices with additional date dimensions
     columns:
       - name: id
@@ -38,6 +40,8 @@ models:
               values: [0,1,2,3,4,5,6]
 
   - name: stg_location_data
+    config:
+      tags: ['silver']
     description: Staged location reference data with standardized formatting
     columns:
       - name: postcode

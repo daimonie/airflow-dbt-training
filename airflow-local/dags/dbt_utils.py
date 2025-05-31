@@ -5,8 +5,8 @@ from typing import Optional, List
 import yaml
 import os
 
-# Default dbt working directory - moved outside dags folder for write permissions
-DEFAULT_DBT_DIR = "/opt/airflow/dbt"
+# Default dbt working directory 
+DEFAULT_DBT_DIR = "/opt/airflow/dags/dbt"
 
 class DbtBaseOperator(BashOperator):
     """
@@ -246,10 +246,8 @@ class DbtDebugOperator(DbtBaseOperator):
         config: bool = False,
         **kwargs
     ) -> None:
-        command_args = ['--config'] if config else None
         super().__init__(
-            dbt_command='debug',
-            command_args=command_args,
+            dbt_command='debug', 
             **kwargs
         )
 

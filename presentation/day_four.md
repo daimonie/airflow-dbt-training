@@ -96,6 +96,16 @@ task_with_output >> task_with_input(task_with_output)
 
 ---
 
+# Start up
+Before we continue, start our images. We'll need a little bit extra this time:
+```
+git pull
+docker-compose build
+docker-compose down
+docker-compose up -d
+```
+---
+
 # Police Data Explorer
 
 I've created some custom Airflow operators to help you explore police-related data.
@@ -141,6 +151,7 @@ After processing, load data to your warehouse:
 upload = UploadToDWHOperator(
     task_id='upload_to_dwh',
     connection_id='dwh',
+    file_path=file_path,
     xcom_task_id='process_table'
 )
 
@@ -153,20 +164,43 @@ upload = UploadToDWHOperator(
 Built-in tools to explore loaded data:
 
 ```python
-# List all tables
-list_dwh = ListDWHTables(
-    task_id='list_tables',
-    connection_id='dwh',
-    schema='public'
-)
 
-# Describe a specific table
-describe = DescribeDWHTable(
-    task_id='describe_table',
-    connection_id='dwh',
-    table_name='police_budget_2023'
-)
+    # List all tables in the data warehouse
+    list_tables = ListDWHTables(
+        task_id='list_dwh_tables',
+        connection_id='dwh',
+        schema='public'
+    )
+
+    # Describe specific EP 1989 table
+    describe_ep_1989 = DescribeDWHTable(
+        task_id='describe_ep_1989',
+        connection_id='dwh',
+        table_name='europees_parlement_landelijk__1989_4280',
+        schema='public'
+    )
+
 ```
+
+---
+
+# Morning plan
+
+Two tasks.
+1. Select the data you want to use for modelling. This might be a group activity.
+2. Create the import DAG using the tools from the past slides / handout!
+
+The DAG should look something like this:
+```
+process_police_table_table_one >> upload_police_table_table_one
+process_police_table_table_two >> upload_police_table_table_two
+process_police_table_table_three >> upload_police_table_table_three
+```
+Let's make sure to produce *Assets*. For postgres, they look like this:
+```
+Asset("postgres://host:port/database/schema/table")
+```
+**NB**: *Dataset* is the old name of *Asset* in airflow. In case you run into that.
 
 ---
 
@@ -213,184 +247,121 @@ dbt (data build tool) helps you:
 
 # Setting Up dbt
 
-Create a new dbt project:
+Normally, you create a new dbt project:
 
 ```bash
 # Initialize new project
 dbt init police_analytics
 
-# Directory structure
-police_analytics/
-  models/           # Your SQL transformations
-  tests/            # Custom data tests
-  macros/          # Reusable SQL snippets
-  seeds/           # Static data files
-  dbt_project.yml  # Project configuration
+```
+But in our case, we have our sandbox project from last week. Let's re-use it.
+
+---
+
+# dbt Profiles Generator
+
+First, let's reuse our connection and make sure dbt is configured to use it:
+```
+  # Create dbt profiles from Airflow connection
+  generate_profiles = DbtGenerateProfilesOperator(
+      task_id='generate_dbt_profiles',
+      connection_id='dwh',  # Use the same connection as UploadToDWHOperator
+  )
 ```
 
 ---
 
-# Configuring Your Project
+# dbt debug
 
-Edit `dbt_project.yml`:
+Let's see if the connection works.
+```
 
-```yaml
-name: 'police_analytics'
-version: '1.0.0'
-
-profile: 'default'  # Uses same warehouse connection
-
-models:
-  police_analytics:
-    staging:
-      +materialized: view
-    marts:
-      +materialized: table
+    # Run dbt debug to verify configuration
+    dbt_debug = DbtDebugOperator(
+        task_id='dbt_debug',
+        config=True  # Added config flag to show all configuration info
+    )
 ```
 
 ---
 
-# Creating Your First Models
+# Alright, let's run everything? Generally, you'll want to split this so that it is clear what works and what doesn't.
 
-Start with staging models (`models/staging/`):
-
-```sql
--- models/staging/stg_police_budget.sql
-SELECT
-    year,
-    department,
-    CAST(budget_amount AS DECIMAL) as budget_amount,
-    currency
-FROM {{ source('raw', 'police_budget_2023') }}
+```
+    # Run dbt models
+    dbt_run = DbtRunOperator(
+        task_id='dbt_run'
+    )
 ```
 
 ---
 
-# Building Marts
+# dbt Test
+And finally, let's see if the data and modelled data follows our tests:
 
-Create business-level models (`models/marts/`):
-
-```sql
--- models/marts/department_spending.sql
-SELECT
-    department,
-    SUM(budget_amount) as total_budget,
-    COUNT(DISTINCT year) as years_of_data
-FROM {{ ref('stg_police_budget') }}
-GROUP BY department
 ```
+    # Run dbt tests
+    dbt_test = DbtTestOperator(
+        task_id='dbt_test',
+        select='+tag:silver'
+    )
 
----
-
-# Testing Your Models
-
-Add tests in `schema.yml`:
-
-```yaml
-version: 2
-
-models:
-  - name: stg_police_budget
-    columns:
-      - name: budget_amount
-        tests:
-          - not_null
-          - positive_values
-
-  - name: department_spending
-    columns:
-      - name: department
-        tests:
-          - unique
-          - not_null
+    dbt_run >> dbt_test\
 ```
+If we split this by zoning, we can see whether it is raw data, enriched data or marts that don't test well
 
 ---
 
-# Adding Documentation
+# Afternoon plan
 
-Document your models in `schema.yml`:
+This morning, we loaded tables and defined them as assets:
 
-```yaml
-version: 2
-
-models:
-  - name: department_spending
-    description: >
-      Aggregated view of department-level police spending
-      across all available years.
-    columns:
-      - name: department
-        description: Police department name/identifier
-      - name: total_budget
-        description: Total budget allocated across all years
 ```
-
----
-
-# Creating Exposures
-
-Define how your data is used:
-
-```yaml
-version: 2
-
-exposures:
-  - name: police_budget_dashboard
-    type: dashboard
-    maturity: high
-    url: https://your-bi-tool/dashboards/police-budget
-    description: >
-      Executive dashboard showing police budget allocation
-      and spending patterns across departments.
-    depends_on:
-      - ref('department_spending')
-    owner:
-        name: Analytics Team
-        email: analytics@police.gov
+Asset("postgres://host:port/database/schema/table")
 ```
+We'll use the defined assets to let Airflow know **when to trigger dbt workflows**. The plan:
+
+1. Model the assets you wanted to model
+2. Ideally we have 1-2 `exposures` that we want to use.
+2. Setup the airflow DAG to run DBT in modular chunks - bronze/silver/gold is fine, but running per exposure is also great!
+
+*NB*: I added tags to all the models, so at the moment you can see how we used the `schema.yml` to set tags for bronze, silver and gold.
 
 ---
 
-# Running dbt
+## Wrap-Up: From Data to Models
 
-Essential commands:
+Today you learned to:
 
-```bash
-# Build all models
-dbt run
+✅ Discover and select real-world open datasets  
+✅ Build custom Airflow DAGs to ingest data  
+✅ Upload structured data to a data warehouse  
+✅ Define dbt models and run them on trigger  
+✅ Use tags and assets to organize your workflow
 
-# Run all tests
-dbt test
+Next steps? Add documentation, tests, exposures — and make it shine.
 
-# Generate documentation
-dbt docs generate
-dbt docs serve
 
-# Build specific models
-dbt run --select marts.department_spending+
-```
+# Unlimited Assets
+
+![Unlimited Assets](unlimited_assets.jpeg)
 
 ---
 
-# Best Practices
+# Assets: A Word of Warning
 
-1. Use staging models for cleaning/standardization
-2. Build marts for business concepts
-3. Test critical assumptions
-4. Document as you go
-5. Use exposures to track usage
-6. Follow consistent naming conventions
+Assets are a fairly new feature in Airflow. While powerful, they can impact scheduler performance.
+
+A better strategy is:
+- Load raw tables without Assets
+- Create one Asset at the end of your pipeline
+- Use that Asset to trigger downstream DAGs
+
+This gives you:
+- Better scheduler performance
+- Cleaner metadata database
+- Still have DAG-to-DAG dependencies
+
+Think of Assets as checkpoints, not individual files!
 
 ---
-
-# Putting It All Together
-
-Your final project should have:
-- Clean, staged source data
-- Transformed business-level models
-- Comprehensive tests
-- Clear documentation
-- Defined exposures
-
-Questions? Let's start building! 🚀
