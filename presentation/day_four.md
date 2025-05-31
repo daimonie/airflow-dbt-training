@@ -373,7 +373,9 @@ Next steps? Add documentation, tests, exposures — and make it shine.
 
 # Unlimited Assets
 
-![Unlimited Assets](/home/marp/app/unlimited_assets.jpeg)
+<center>
+<img src="/home/marp/app/unlimited_assets.jpeg" alt="Unlimited Assets" width="600"/>
+</center>
 
 ---
 
