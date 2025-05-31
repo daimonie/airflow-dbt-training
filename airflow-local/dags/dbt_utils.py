@@ -19,7 +19,7 @@ class DbtBaseOperator(BashOperator):
     :param command_args: Additional command line arguments
     """
     
-    template_fields = ('select', 'dbt_dir')
+    template_fields = ('dbt_dir',)
     
     def __init__(
         self,
@@ -120,11 +120,14 @@ class DbtRunOperator(DbtBaseOperator):
     )
     ```
     """
+    template_fields = DbtBaseOperator.template_fields + ('select',)
+    
     def __init__(
         self,
         select: Optional[str] = None,
         **kwargs
     ) -> None:
+        self.select = select  # Store select as instance variable for templating
         super().__init__(
             dbt_command='run',
             select=select,
@@ -143,11 +146,14 @@ class DbtTestOperator(DbtBaseOperator):
     )
     ```
     """
+    template_fields = DbtBaseOperator.template_fields + ('select',)
+    
     def __init__(
         self,
         select: Optional[str] = None,
         **kwargs
     ) -> None:
+        self.select = select  # Store select as instance variable for templating
         super().__init__(
             dbt_command='test',
             select=select,
@@ -166,11 +172,14 @@ class DbtBuildOperator(DbtBaseOperator):
     )
     ```
     """
+    template_fields = DbtBaseOperator.template_fields + ('select',)
+    
     def __init__(
         self,
         select: Optional[str] = None,
         **kwargs
     ) -> None:
+        self.select = select  # Store select as instance variable for templating
         super().__init__(
             dbt_command='build',
             select=select,
@@ -189,11 +198,14 @@ class DbtSeedOperator(DbtBaseOperator):
     )
     ```
     """
+    template_fields = DbtBaseOperator.template_fields + ('select',)
+    
     def __init__(
         self,
         select: Optional[str] = None,
         **kwargs
     ) -> None:
+        self.select = select  # Store select as instance variable for templating
         super().__init__(
             dbt_command='seed',
             select=select,
@@ -253,11 +265,14 @@ class DbtCompileOperator(DbtBaseOperator):
     )
     ```
     """
+    template_fields = DbtBaseOperator.template_fields + ('select',)
+    
     def __init__(
         self,
         select: Optional[str] = None,
         **kwargs
     ) -> None:
+        self.select = select  # Store select as instance variable for templating
         super().__init__(
             dbt_command='compile',
             select=select,
