@@ -245,6 +245,34 @@ dbt (data build tool) helps you:
 
 ---
 
+# DBT Models
+DBT lets you write SQL files (Transformations) and add context using either `schema.yml` or a `config` block in jinja.
+
+Models refer to each other by either using `ref` (another model) or `source` (a source loaded via something else):
+```
+SELECT * FROM FROM {{ source('public', 'raw_housing_prices') }} 
+```
+or
+```
+SELECT *  FROM {{ ref('stg_housing_prices') }} 
+```
+
+---
+
+# DBT Commands
+
+We familiarized ourselves with a long list of commands:
+- dbt debug
+- dbt run
+- dbt compile
+- dbt build
+- dbt test
+
+And with selecting our `tags` or other patterns via `--select tag:bronze`. And we wrote macros, re-useable functions or pieces of SQL.
+
+---
+
+
 # Setting Up dbt
 
 Normally, you create a new dbt project:

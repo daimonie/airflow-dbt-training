@@ -381,33 +381,113 @@ class UploadToDWHOperator(BaseOperator):
         uri = conn.get_uri().replace('postgres://', 'postgresql://')
         return create_engine(uri)
 
+    def _is_valid_file_path(self, path: str) -> bool:
+        """Check if a path is a valid file path (not a custom asset identifier)."""
+        # Only consider paths that start with file:// as actual file paths
+        if not path.startswith('file://'):
+            return False
+        return True
+
     def _get_files_to_process(self, context) -> List[str]:
-        """Determine which files to process from direct path or XCom.
-        Priority:
-        1. XCom values from specified task
-        2. Direct file path
-        3. Asset/Dataset paths (as fallback)
+        """Determine which files to process using a clear priority order.
+        
+        Priority Order (first match wins):
+        0. Context direct file list (automatic from upstream task)
+           - Airflow automatically passes task outputs as parameters
+           - Most elegant when upstream task returns list of files
+           
+        1. XCom values from specified task (xcom_task_id)
+           - Gets file list from another task's return value
+           - Manual XCom pulling for specific task IDs
+           
+        2. Direct file path (file_path parameter)
+           - Explicit file path or pattern provided to operator
+           - Can include wildcards like "/path/*.json"
+           
+        3. Asset/Dataset paths from inlets (fallback only)
+           - Only considers assets that start with "file://"
+           - Skips custom asset identifiers like "dag_name.asset_name"
+           - Rarely used fallback for file-based assets
+        
+        Returns:
+            List of file paths to process
+            
+        Raises:
+            ValueError: If no valid file paths are found from any source
         """
-        # First priority: XCom values
+        # PRIORITY 0: Check if context contains a direct list of filenames
+        # This handles cases where upstream task returns file list and Airflow passes it automatically
+        task_instance = context.get('task_instance')
+        if task_instance and hasattr(task_instance, 'xcom_pull'):
+            # Check if this task was called with a file list parameter from upstream
+            upstream_return = task_instance.xcom_pull(task_ids=None)  # Get our own return value if any
+            
+            # Also check if we have direct task outputs from upstream dependencies
+            if hasattr(self, 'inlets') and self.inlets:
+                for inlet in self.inlets:
+                    if isinstance(inlet, Dataset) and inlet.uri == "police_tables_processing.json_files":
+                        # This is our custom asset - check the corresponding task
+                        upstream_files = task_instance.xcom_pull(task_ids='list_final_assets')
+                        if upstream_files and isinstance(upstream_files, list):
+                            self.log.info(f"🔍 PRIORITY 0: Found file list from upstream task via custom asset: {len(upstream_files)} files")
+                            return upstream_files
+        
+        # PRIORITY 1: XCom values from specified task
         if self.xcom_task_id:
+            self.log.info(f"🔍 PRIORITY 1: Checking XCom from task: {self.xcom_task_id}")
             xcom_value = context['task_instance'].xcom_pull(
                 task_ids=self.xcom_task_id,
                 key=self.xcom_key
             )
+            self.log.info(f"XCom value: {xcom_value}")
+            
             if xcom_value is not None:
                 if isinstance(xcom_value, list):
-                    return xcom_value
-                return [xcom_value]
+                    if xcom_value:  # Make sure list is not empty
+                        self.log.info(f"✅ Using XCom list with {len(xcom_value)} files")
+                        return xcom_value
+                    else:
+                        self.log.warning("⚠️ XCom returned empty list, trying next priority")
+                else:
+                    self.log.info(f"✅ Using XCom single value: {xcom_value}")
+                    return [xcom_value]
+            else:
+                self.log.warning(f"⚠️ XCom from task {self.xcom_task_id} returned None, trying next priority")
         
-        # Second priority: Direct file path
+        # PRIORITY 2: Direct file path parameter
         if self.file_path:
+            self.log.info(f"🔍 PRIORITY 2: Using direct file path: {self.file_path}")
             return [self.file_path]
             
-        # Last resort: Check inlets for file paths
+        # PRIORITY 3: Asset/Dataset paths from inlets (fallback only)
         if hasattr(self, 'inlets') and self.inlets:
-            return [inlet.uri for inlet in self.inlets if isinstance(inlet, Dataset)]
+            self.log.info(f"🔍 PRIORITY 3: Checking {len(self.inlets)} inlets as fallback")
+            valid_paths = []
+            for inlet in self.inlets:
+                if isinstance(inlet, Dataset):
+                    self.log.info(f"Checking inlet: {inlet.uri}")
+                    if self._is_valid_file_path(inlet.uri):
+                        self.log.info(f"✅ Valid file path found: {inlet.uri}")
+                        valid_paths.append(inlet.uri)
+                    else:
+                        self.log.info(f"❌ Skipping custom asset identifier: {inlet.uri}")
             
-        raise ValueError("No files specified for upload - need either xcom_task_id, file_path, or valid inlets")
+            if valid_paths:
+                self.log.info(f"✅ Using {len(valid_paths)} valid paths from inlets")
+                return valid_paths
+            else:
+                self.log.warning("⚠️ No valid file paths found in inlets")
+            
+        # No valid sources found
+        self.log.error("❌ No valid file paths found from any priority level")
+        raise ValueError(
+            "No valid file paths found. Checked in order:\n"
+            "0. Context direct file list (automatic from upstream)\n"
+            "1. XCom from task (xcom_task_id parameter)\n"
+            "2. Direct file path (file_path parameter)\n"
+            "3. File-based assets in inlets (file:// URIs only)\n"
+            "Please provide one of these sources."
+        )
 
     def _normalize_file_path(self, file_path: str | Dataset) -> str:
         """Convert Dataset or file:// URI to a standard file path."""
